@@ -9,12 +9,19 @@
         <link rel="stylesheet" href='@routes.Assets.at("lib/bootstrap/css/bootstrap.min.css")'>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+
+        <style type="text/css" media="screen">
+        #editor {
+        position: relative;
+        height: 300px;
+        }
+        </style>
     </head>
     <body>
         @content
 
 
-        <script src="/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.at("lib/ace/src-min-noconflict/ace.js")" type="text/javascript" charset="utf-8"></script>
         <script>
             var editor = ace.edit("editor");
             editor.setTheme("ace/theme/monokai");
