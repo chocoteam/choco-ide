@@ -1,8 +1,7 @@
 package controllers;
 
-import play.mvc.*;
+import play.mvc.Result;
 import views.html.index;
-import views.html.main;
 
 import static play.mvc.Results.ok;
 

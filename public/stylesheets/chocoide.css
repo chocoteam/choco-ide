@@ -1,0 +1,37 @@
+header {
+    background-color: #035E93;
+    height: 10%;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+header div {
+    vertical-align: top;
+    color: white;
+    display: inline-block;
+}
+
+header a,
+header a:active,
+header a:visited{
+    color: white;
+    text-decoration: none;
+}
+
+header a:hover {
+    background-color: #048ad6;
+    color: white;
+    text-decoration: none;
+}
+
+#editor {
+    position: relative;
+    height: 300px;
+}
+
+#console {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 300px;
+    border: 1px solid black;
+}
