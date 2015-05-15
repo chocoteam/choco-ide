@@ -9,7 +9,7 @@ function compile() {
     var code = editor.getSession().getValue();
 
     // Fire the HTTP POST request
-    request = $.ajax({
+    var request = $.ajax({
         url: "/compile",
         type: "post",
         data: { body: code }
@@ -22,15 +22,15 @@ function compile() {
 
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown){
-        // bouchonnage / code dans request.fail en attendant que le service soit développé
-        // a déplacer dans request.success
+        // bouchonnage / code dans request.fail en attendant que le service soit dï¿½veloppï¿½
+        // a dï¿½placer dans request.success
         var response = '{"Errors":"Duplicate import of package fr.toto","Events":[{"Message":"Hello guys","Kind":"stdout","Delay":0},{"Message":"2009/11/10 23:00:00 Error..","Kind":"stderr","Delay":0}]}';
 
         var jsonObject = jQuery.parseJSON(response);
         var compilationMessage = jsonObject.Errors;
         var runtimeEvents = jsonObject.Events;
 
-        var console = document.getElementById("console");
+        var console = $('#console');
 
         if(compilationMessage != "") {
             console.innerHTML += "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
