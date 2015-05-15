@@ -7,6 +7,7 @@ window.onload = function() {
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
+    var console = document.getElementById('console');
 
     // Fire the HTTP POST request
     var request = $.ajax({
@@ -29,8 +30,6 @@ function compile() {
         var jsonObject = jQuery.parseJSON(response);
         var compilationMessage = jsonObject.Errors;
         var runtimeEvents = jsonObject.Events;
-
-        var console = $('#console');
 
         if(compilationMessage != "") {
             console.innerHTML += "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
