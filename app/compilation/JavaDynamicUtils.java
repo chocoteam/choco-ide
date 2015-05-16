@@ -1,6 +1,7 @@
 package compilation;
 
-import org.eclipse.aether.util.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import javax.tools.JavaFileObject.Kind;
 import java.net.URI;
