@@ -5,13 +5,18 @@ import views.html.index;
 
 import static play.mvc.Results.ok;
 
-/**
- * Created by dev on 13/05/15.
- */
 public class Application {
 
-    public static Result index () {
+    public static Result index() {
         return ok(index.render("Let's get working guys !"));
     }
 
+    /**
+     * Call to compilation service
+     *
+     * @return result compilation result
+     */
+    public static Result compile() {
+        return ok("compilation OK");
+    }
 }
