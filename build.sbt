@@ -8,4 +8,6 @@ scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq( jdbc , anorm , cache , ws )
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
+libraryDependencies += "org.jetbrains" % "annotations" % "13.0"
+
+unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
