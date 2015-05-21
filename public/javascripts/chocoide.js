@@ -18,13 +18,7 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
-
-    });
-
-    // Callback handler that will be called on failure
-    request.fail(function (jqXHR, textStatus, errorThrown){
-        // bouchonnage / code dans request.fail en attendant que le service soit d�velopp�
-        // a d�placer dans request.success
+        // bouchonnage
         var response = '{"Errors":"Duplicate import of package fr.toto","Events":[{"Message":"Hello guys","Kind":"stdout","Delay":0},{"Message":"2009/11/10 23:00:00 Error..","Kind":"stderr","Delay":0}]}';
 
         var jsonObject = jQuery.parseJSON(response);
@@ -48,14 +42,15 @@ function compile() {
             }
             console.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.Message + "</p>";
         });
+    });
 
-        //////////////////////////////////////
-
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
         // Log the error to the console
-        //console.error(
-        //    "The following error occurred: "+
-        //    textStatus, errorThrown
-        //);
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown
+        );
     });
 
     // Callback handler that will always be called
