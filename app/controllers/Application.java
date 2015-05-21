@@ -5,6 +5,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 
+import java.lang.Package;
+import java.rmi.server.LoaderHandler;
 import java.util.Map;
 
 public class Application extends Controller {
@@ -35,5 +37,10 @@ public class Application extends Controller {
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Result getKeywords() {
+        Package pkg = Package.getPackage("");
+        return ok("keywords OK");
     }
 }
