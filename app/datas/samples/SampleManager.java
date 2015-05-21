@@ -12,6 +12,7 @@ import java.util.*;
  * Created by Mathieu on 21/05/2015.
  */
 public class SampleManager {
+    private static final String[] ALLOWED_EXTENSION = {".java"};
     private static SampleManager instance;
     private final File rootDirectory;
     private Properties nameProperties;
@@ -19,13 +20,13 @@ public class SampleManager {
     /**
      * Map that contains every sample to cache them
      */
-    //TODO : use it
     private Map<String, Sample> sampleMap;
 
     /**
      * Singleton constructor
      */
     private SampleManager() {
+        this.sampleMap = new HashMap<>();
         //Create the sample directory
         String directory = Play.application().configuration().getString("sample.root.directory");
         rootDirectory = new File(directory);
@@ -57,23 +58,36 @@ public class SampleManager {
      *
      * @return the list that contains every available sample, return a empty list if a sample is not available.
      */
-    public List<Sample> getAvailableSample() {
-        List<Sample> sampleList = new ArrayList<>();
-        //List all the files
-        File[] files = this.rootDirectory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                try {
-                    String filename = file.getName();
-                    String name = this.nameProperties.containsKey(filename) ? this.nameProperties.getProperty(filename) : filename;
-                    Sample sample = new Sample(name, filename,getContent(file));
-                    sampleList.add(sample);
-                } catch (Exception e) {
-                    Logger.error("Can't read the given sample file %s", file.getPath(), e);
+    public Collection<Sample> getAvailableSample() {
+        //Fill the map
+        if(this.sampleMap.isEmpty()) {
+            //List all the files
+            File[] files = this.rootDirectory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (isValidFile(file)) {
+                        try {
+                            String filename = file.getName();
+                            String name = this.nameProperties.containsKey(filename) ? this.nameProperties.getProperty(filename) : filename;
+                            Sample sample = new Sample(name, filename, getContent(file));
+                            sampleMap.put(sample.getFilename(),sample);
+                        } catch (Exception e) {
+                            Logger.error("Can't read the given sample file %s", file.getPath(), e);
+                        }
+                    }
                 }
             }
         }
-        return sampleList;
+        return this.sampleMap.values();
+    }
+
+    private boolean isValidFile(File file) {
+        for (String ext : ALLOWED_EXTENSION) {
+            if (file.getName().endsWith(ext)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

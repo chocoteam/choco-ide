@@ -11,6 +11,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class Application extends Controller {
     }
 
     public static Result getCodeSampleList() throws JsonProcessingException {
-        List<Sample> availableSample = SampleManager.getInstance().getAvailableSample();
+        Collection<Sample> availableSample = SampleManager.getInstance().getAvailableSample();
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(availableSample);
         return ok(json);
