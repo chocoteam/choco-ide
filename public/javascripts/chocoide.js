@@ -4,6 +4,7 @@ window.onload = function() {
     editor.getSession().setMode("ace/mode/java");
 }
 
+
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
@@ -18,7 +19,7 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
-
+        console.innerHTML="<p>"+textStatus+"</p>";
     });
 
     // Callback handler that will be called on failure
@@ -32,7 +33,7 @@ function compile() {
         var runtimeEvents = jsonObject.Events;
 
         if(compilationMessage != "") {
-            console.innerHTML += "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
+            console.innerHTML = "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
         }
 
         runtimeEvents.forEach(function(runtimeEvent) {

@@ -1,13 +1,17 @@
-header {
+body {
     background-color: #035E93;
+    min-width: 320px;
+}
+
+header, footer {
     height: 10%;
     margin-left: 0px;
     margin-right: 0px;
+    color: white;
 }
 
-header div {
+header div, footer div {
     vertical-align: top;
-    color: white;
     display: inline-block;
 }
 
@@ -16,6 +20,15 @@ header a:active,
 header a:visited{
     color: white;
     text-decoration: none;
+}
+
+section {
+    background-color: #ffffff;
+    padding-bottom: 3%;
+}
+
+section button {
+    margin: 4% 0px 4% 0px;
 }
 
 header a:hover {
