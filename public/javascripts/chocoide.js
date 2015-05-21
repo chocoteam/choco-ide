@@ -1,7 +1,62 @@
+// Global variable for Choco samples
+var samples;
+
 window.onload = function() {
+    // Fullfill drilldown list with Choco samples
+    updateSamples();
+
+    // Initializing Ace editor
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/java");
+    editor.$blockScrolling = Infinity;
+
+    // Event handler when selected value has changed
+    $('#samples').change(function() {
+        var filenameSelectedSample = $('#samples option:selected').val();
+
+        var jsonSamples = jQuery.parseJSON(samples);
+        jsonSamples.forEach(function(jsonSample) {
+            if (filenameSelectedSample == jsonSample.filename) {
+                editor.getSession().setValue(jsonSample.content);
+            }
+        });
+    });
+}
+
+function updateSamples() {
+    var select = $('#samples');
+
+    // Fire the HTTP GET request
+    var request = $.ajax({
+        url: "/getCodeSampleList",
+        type: "get"
+    });
+
+    request.done(function (response, textStatus, jqXHR){
+        // Updating the model
+        samples = response;
+
+        // Updating the initial code in Ace editor
+        ace.edit("editor").getSession().setValue(jQuery.parseJSON(samples)[0].content);
+        var jsonSamples = jQuery.parseJSON(response);
+
+        // Updating the drilldown
+        jsonSamples.forEach(function(jsonSample) {
+            var option = document.createElement("option");
+            option.text = jsonSample.name;
+            option.value = jsonSample.filename;
+            select.append(option);
+        });
+    });
+
+    request.fail(function (jqXHR, textStatus, errorThrown){
+        // Log the error to the console
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown
+        );
+    });
 }
 
 function compile() {
