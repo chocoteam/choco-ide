@@ -1,10 +1,15 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import compilation.StringCompilerAndRunner;
+import datas.samples.Sample;
+import datas.samples.SampleManager;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class Application extends Controller {
@@ -35,5 +40,21 @@ public class Application extends Controller {
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Result getCodeSampleList(){
+        try {
+            Collection<Sample> availableSample = SampleManager.getInstance().getAvailableSample();
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(availableSample);
+            return ok(json);
+        }catch(Exception e){
+            Logger.warn("Problem while getting the samples", e);
+            return internalServerError("Problem while getting the samples : "+e.getMessage());
+        }
+    }
+
+    public static Result reportError() {
+        return play.mvc.Results.TODO;
     }
 }
