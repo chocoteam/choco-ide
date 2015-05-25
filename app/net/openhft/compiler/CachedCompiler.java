@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static net.openhft.compiler.CompilerUtils.writeBytes;
@@ -54,8 +55,8 @@ public class CachedCompiler {
         }
     }
 
-    public Class loadFromJava(@NotNull String className, @NotNull String javaCode) throws ClassNotFoundException {
-        return loadFromJava(getClass().getClassLoader(), className, javaCode);
+    public Class loadFromJava(@NotNull String className, @NotNull String javaCode, ClassLoader cl) throws ClassNotFoundException {
+        return loadFromJava(cl, className, javaCode);
     }
 
     @NotNull
@@ -76,21 +77,20 @@ public class CachedCompiler {
     }
 
     public Class loadFromJava(@NotNull ClassLoader classLoader, @NotNull String className, @NotNull String javaCode) throws ClassNotFoundException {
-        Class clazz = null;
-        Map<String, Class> loadedClasses;
+        System.out.println(" --- classLoader lors du loadFromJava de " + className + " -- AVANT");
+        debugClassLoader(classLoader);
+
         synchronized (loadedClassesMap) {
-            loadedClasses = loadedClassesMap.get(classLoader);
-            if (loadedClasses == null)
-                loadedClassesMap.put(classLoader, loadedClasses = new LinkedHashMap<String, Class>());
-            else
-                clazz = loadedClasses.get(className);
+            if (!loadedClassesMap.containsKey(classLoader))
+                loadedClassesMap.put(classLoader, new LinkedHashMap<String, Class>());
+            else if (getExistingLoadedClassesMap(classLoader).containsKey(className))
+                return getExistingLoadedClassesMap(classLoader).get(className);
         }
-        if (clazz != null)
-            return clazz;
+
         for (Map.Entry<String, byte[]> entry : compileFromJava(className, javaCode).entrySet()) {
             String className2 = entry.getKey();
             synchronized (loadedClassesMap) {
-                if (loadedClasses.containsKey(className2))
+                if (getExistingLoadedClassesMap(classLoader).containsKey(className2))
                     continue;
             }
             byte[] bytes = entry.getValue();
@@ -101,15 +101,51 @@ public class CachedCompiler {
                     LoggerFactory.getLogger(CachedCompiler.class).info("Updated {} in {}", className2, classDir);
                 }
             }
-            Class clazz2 = CompilerUtils.defineClass(classLoader, className2, bytes);
+
+            Class clazz2;
+            try {
+                clazz2 = CompilerUtils.defineClass(classLoader, className2, bytes);
+            } catch(AssertionError e){
+                System.out.println("classe + " + className2 + " déjà définie");
+            }
+
             synchronized (loadedClassesMap) {
-                loadedClasses.put(className2, clazz2);
+                Class loadedClass = classLoader.loadClass(className2);
+                getExistingLoadedClassesMap(classLoader).put(className2, loadedClass);
             }
         }
-//        CompilerUtils.s_fileManager.clearBuffers();
+
+        System.out.println(" --- classLoader lors du loadFromJava de " + className + " -- APRES BOUCLE COMPILE");
+        debugClassLoader(classLoader);
+        System.out.println("classe à chercher : " + className);
+
+        Class clazz = classLoader.loadClass(className);
         synchronized (loadedClassesMap) {
-            loadedClasses.put(className, clazz = classLoader.loadClass(className));
+            getExistingLoadedClassesMap(classLoader).put(className, clazz);
         }
         return clazz;
+    }
+
+    private Map<String, Class> getExistingLoadedClassesMap(@NotNull ClassLoader classLoader) {
+        return loadedClassesMap.get(classLoader);
+    }
+
+    private void debugClassLoader(@NotNull ClassLoader classLoader) {
+        System.out.println("affichage du classloader :");
+        try {
+            Vector<Class> classes = getAllClassesOf(classLoader);
+            for(Class c : classes)
+                System.out.println(c.getName());
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Vector<Class> getAllClassesOf(@NotNull ClassLoader classLoader) throws NoSuchFieldException, IllegalAccessException {
+        Field f = ClassLoader.class.getDeclaredField("classes");
+        f.setAccessible(true);
+        return (Vector<Class>) f.get(classLoader);
     }
 }

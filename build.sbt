@@ -14,4 +14,9 @@ libraryDependencies += "com.fasterxml.jackson.core"%"jackson-core"%"2.5.3"
 
 libraryDependencies += "org.choco-solver"%"choco-solver"%"3.3.1"
 
+// adding the tools.jar to the unmanaged-jars seq
+unmanagedJars in Compile ~= {uj =>
+  Seq(Attributed.blank(file(System.getProperty("java.home").dropRight(3)+"lib/tools.jar"))) ++ uj
+}
+
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
