@@ -10,4 +10,8 @@ libraryDependencies ++= Seq( jdbc , anorm , cache , ws )
 
 libraryDependencies += "org.jetbrains" % "annotations" % "13.0"
 
+libraryDependencies += "com.fasterxml.jackson.core"%"jackson-core"%"2.5.3"
+
+libraryDependencies += "org.choco-solver"%"choco-solver"%"3.3.1"
+
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
