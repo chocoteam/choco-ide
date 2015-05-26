@@ -74,34 +74,25 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
-        console.innerHTML="<p>"+textStatus+"</p>";
-    });
+        var compilationEvents = response.errors;
+        var runtimeEvents = response.events;
 
-    // Callback handler that will be called on failure
-    request.fail(function (jqXHR, textStatus, errorThrown){
-        // bouchonnage
-        var response = '{"Errors":"Duplicate import of package fr.toto","Events":[{"Message":"Hello guys","Kind":"stdout","Delay":0},{"Message":"2009/11/10 23:00:00 Error..","Kind":"stderr","Delay":0}]}';
-
-        var jsonObject = jQuery.parseJSON(response);
-        var compilationMessage = jsonObject.Errors;
-        var runtimeEvents = jsonObject.Events;
-
-        if(compilationMessage != "") {
-            console.innerHTML = "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
-        }
+        compilationEvents.forEach(function(compilationEvent) {
+            console.innerHTML += "<p style=\" color:red; background-color: black\">" + "Error during compilation : " + compilationEvent + "</p>";
+        });
 
         runtimeEvents.forEach(function(runtimeEvent) {
             var textColor = "blue";
-            if(runtimeEvent.Kind == "stdout") {
+            if(runtimeEvent.kind == "stdout") {
 
             }
-            else if(runtimeEvent.Kind == "stderr") {
+            else if(runtimeEvent.kind == "stderr") {
                 textColor = "red"
             }
             else {
                 // ????
             }
-            console.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.Message + "</p>";
+            console.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.message + "</p>";
         });
     });
 
@@ -112,9 +103,5 @@ function compile() {
             "The following error occurred: "+
             textStatus, errorThrown
         );
-    });
-
-    // Callback handler that will always be called
-    request.always(function () {
     });
 }
