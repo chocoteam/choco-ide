@@ -1,6 +1,8 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import compilation.CompilationAndRunResult;
 import compilation.StringCompilerAndRunner;
 import datas.samples.Sample;
 import datas.samples.SampleManager;
@@ -30,39 +32,18 @@ public class Application extends Controller {
      * @return result compilation result
      */
     public static Result compile() throws IllegalAccessException, InstantiationException {
-        System.out.println(request().body());
-        final Map<String, String[]> mapParameters = request().body().asFormUrlEncoded();
-        String code = mapParameters.get("body")[0] + INTERFACE_CHOCO;
-
-
-//        String code = "package compilation;" + "\n"
-//                + "class ChocoProjectImpl implements ChocoProject {" + "\n"
-//                + " @Override" + "\n"
-//                + " public void init() {" + "\n"
-//                + "     System.out.println(\"... init du code compilé ...\");" + "\n"
-//                + " }" + "\n"
-//                + " @Override" + "\n"
-//                + " public void run() {" + "\n"
-//                + "     System.out.println(\"... run du code ...\");" + "\n"
-//                + " }" + "\n"
-//                + "}" + "\n"
-//                + INTERFACE_CHOCO;
-
-        System.out.println(code);
-        compileAndRunFromString(code);
-        return ok("compilation OK");
-    }
-
-    private static void compileAndRunFromString(String code) throws InstantiationException, IllegalAccessException {
-        ClassLoader cl = Play.application().classloader();
-//        Thread.currentThread().getContextClassLoader();
-//        Application.class.getClassLoader();
-
-        StringCompilerAndRunner compilerAndRunner = new StringCompilerAndRunner(cl);
         try {
-            compilerAndRunner.compileAndRun(code);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            final Map<String, String[]> mapParameters = request().body().asFormUrlEncoded();
+            String code = mapParameters.get("body")[0] + INTERFACE_CHOCO;
+            System.out.println("Code reçu : " + code);
+            ClassLoader cl = Play.application().classloader();
+            StringCompilerAndRunner compilerAndRunner = new StringCompilerAndRunner(cl);
+
+            CompilationAndRunResult result = compilerAndRunner.compileAndRun(code);
+            return ok(new ObjectMapper().<JsonNode>valueToTree(result));
+        } catch(Exception e){
+            Logger.warn("Problem while compiling and running", e);
+            return internalServerError("Problem while compiling and running : "+e.getMessage());
         }
     }
 

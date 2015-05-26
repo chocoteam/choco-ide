@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
+import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
@@ -55,12 +56,12 @@ public class CachedCompiler {
         }
     }
 
-    public Class loadFromJava(@NotNull String className, @NotNull String javaCode, ClassLoader cl) throws ClassNotFoundException {
-        return loadFromJava(cl, className, javaCode);
+    public Class loadFromJava(@NotNull String className, @NotNull String javaCode, ClassLoader cl, DiagnosticListener diagnosticListener) throws ClassNotFoundException {
+        return loadFromJava(cl, className, javaCode, diagnosticListener);
     }
 
     @NotNull
-    Map<String, byte[]> compileFromJava(@NotNull String className, @NotNull String javaCode) {
+    Map<String, byte[]> compileFromJava(@NotNull String className, @NotNull String javaCode, DiagnosticListener<JavaFileObject> diagnosticListener) {
         Iterable<? extends JavaFileObject> compilationUnits;
         if (sourceDir != null) {
             String filename = className.replaceAll("\\.", '\\' + File.separator) + ".java";
@@ -71,12 +72,13 @@ public class CachedCompiler {
             javaFileObjects.add(new JavaSourceFromString(className, javaCode));
             compilationUnits = javaFileObjects;
         }
-        // reuse the same file manager to allow caching of jar files
-        CompilerUtils.s_compiler.getTask(null, CompilerUtils.s_fileManager, diagnostic -> System.out.println("ERREUR : " + diagnostic), null, null, compilationUnits).call();
+
+        CompilerUtils.s_compiler.getTask(null, CompilerUtils.s_fileManager, diagnosticListener, null, null, compilationUnits).call();
+
         return CompilerUtils.s_fileManager.getAllBuffers();
     }
 
-    public Class loadFromJava(@NotNull ClassLoader classLoader, @NotNull String className, @NotNull String javaCode) throws ClassNotFoundException {
+    public Class loadFromJava(@NotNull ClassLoader classLoader, @NotNull String className, @NotNull String javaCode, DiagnosticListener<JavaFileObject> diagnosticListener) throws ClassNotFoundException {
         System.out.println(" --- classLoader lors du loadFromJava de " + className + " -- AVANT");
         debugClassLoader(classLoader);
 
@@ -87,7 +89,7 @@ public class CachedCompiler {
                 return getExistingLoadedClassesMap(classLoader).get(className);
         }
 
-        for (Map.Entry<String, byte[]> entry : compileFromJava(className, javaCode).entrySet()) {
+        for (Map.Entry<String, byte[]> entry : compileFromJava(className, javaCode, diagnosticListener).entrySet()) {
             String className2 = entry.getKey();
             synchronized (loadedClassesMap) {
                 if (getExistingLoadedClassesMap(classLoader).containsKey(className2))

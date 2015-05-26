@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
@@ -81,8 +82,8 @@ public enum CompilerUtils {
      * @throws IOException            the resource could not be loaded.
      * @throws ClassNotFoundException the class name didn't match or failed to initialise.
      */
-    public static Class loadFromResource(@NotNull String className, @NotNull String resourceName) throws IOException, ClassNotFoundException {
-        return loadFromJava(className, readText(resourceName));
+    public static Class loadFromResource(@NotNull String className, @NotNull String resourceName, DiagnosticListener diagnosticListener) throws IOException, ClassNotFoundException {
+        return loadFromJava(className, readText(resourceName), diagnosticListener);
     }
 
     /**
@@ -93,8 +94,8 @@ public enum CompilerUtils {
      * @return the outer class loaded.
      * @throws ClassNotFoundException the class name didn't match or failed to initialise.
      */
-    private static Class loadFromJava(@NotNull String className, @NotNull String javaCode) throws ClassNotFoundException {
-        return CACHED_COMPILER.loadFromJava(Thread.currentThread().getContextClassLoader(), className, javaCode);
+    private static Class loadFromJava(@NotNull String className, @NotNull String javaCode, DiagnosticListener diagnosticListener) throws ClassNotFoundException {
+        return CACHED_COMPILER.loadFromJava(Thread.currentThread().getContextClassLoader(), className, javaCode, diagnosticListener);
     }
 
     /**
