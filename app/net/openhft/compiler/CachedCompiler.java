@@ -72,7 +72,7 @@ public class CachedCompiler {
             compilationUnits = javaFileObjects;
         }
         // reuse the same file manager to allow caching of jar files
-        CompilerUtils.s_compiler.getTask(null, CompilerUtils.s_fileManager, null, null, null, compilationUnits).call();
+        CompilerUtils.s_compiler.getTask(null, CompilerUtils.s_fileManager, diagnostic -> System.out.println("ERREUR : " + diagnostic), null, null, compilationUnits).call();
         return CompilerUtils.s_fileManager.getAllBuffers();
     }
 
