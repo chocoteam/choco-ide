@@ -1,16 +1,23 @@
 package compilation;
 
+import net.openhft.compiler.CachedCompiler;
+
 /**
  * Created by yann on 16/05/15.
  */
 public class StringCompilerAndRunner {
-    private static final String CLASS_NAME = "ChocoProgram";
+    private final ClassLoader cl;
 
-    public void compileAndRun(String code) throws IllegalAccessException, InstantiationException {
-        JavaDynamicCompiler<Runnable> compiler = new JavaDynamicCompiler<>();
-        Class<Runnable> clazz = compiler.compile(null, CLASS_NAME, code);
-        System.out.println(clazz.getName());
-        Runnable r = clazz.newInstance();
-        r.run();
+    public StringCompilerAndRunner(ClassLoader cl) {
+        this.cl = cl;
+    }
+
+    public void compileAndRun(String code) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        CachedCompiler cc = new CachedCompiler(null, null);
+        cc.loadFromJava("compilation.ChocoProject", code, cl);
+        Class clazz = cc.loadFromJava("compilation.ChocoProjectImpl", code, cl);
+        ChocoProject instance = (ChocoProject) clazz.newInstance();
+        instance.init();
+        instance.run();
     }
 }

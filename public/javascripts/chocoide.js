@@ -59,6 +59,7 @@ function updateSamples() {
     });
 }
 
+
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
@@ -73,6 +74,11 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
+        console.innerHTML="<p>"+textStatus+"</p>";
+    });
+
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
         // bouchonnage
         var response = '{"Errors":"Duplicate import of package fr.toto","Events":[{"Message":"Hello guys","Kind":"stdout","Delay":0},{"Message":"2009/11/10 23:00:00 Error..","Kind":"stderr","Delay":0}]}';
 
@@ -81,7 +87,7 @@ function compile() {
         var runtimeEvents = jsonObject.Events;
 
         if(compilationMessage != "") {
-            console.innerHTML += "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
+            console.innerHTML = "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
         }
 
         runtimeEvents.forEach(function(runtimeEvent) {

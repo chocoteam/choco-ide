@@ -3,9 +3,9 @@
 @main("Choco IDE") {
 
     <header class="row">
-        <div class="col-md-offset-3">
+        <div class="col-xs-offset-3">
             <img src='@routes.Assets.at("images/ChocoLogo-160x135.png")'/>
-            <div>
+            <div class="text-justify">
                 <h1>Choco IDE</h1>
                 <h4>Ultra light IDE to try Choco</h4>
                 <a href="http://choco-solver.org/">http://choco-solver.org/</a>
@@ -17,10 +17,15 @@
         <div id="editor" class="col-xs-12 col-md-6"></div>
         <div id="console" class="col-xs-12 col-md-6"></div>
         <select id="samples"></select>
-        <button type="button" class="btn btn-default btn-lg col-md-offset-5" onclick="compile()">
+        <button type="button" class="btn btn-default btn-lg col-xs-offset-5" onclick="compile()">
             <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
             Run
         </button>
     </section>
+
+    <footer class="row text-center">
+        <img  class="pull-right img-responsive" src='@routes.Assets.at("images/logo-emn.png")'/>
+        <p>Made in May 2015</p>
+    </footer>
 
 }
