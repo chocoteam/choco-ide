@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import compilation.CompilationAndRunResult;
 import compilation.StringCompilerAndRunner;
+import datas.report.Report;
+import datas.report.ReportManager;
 import datas.samples.Sample;
 import datas.samples.SampleManager;
 import play.Logger;
@@ -47,19 +49,29 @@ public class Application extends Controller {
         }
     }
 
-    public static Result getCodeSampleList(){
+    public static Result getCodeSampleList() {
         try {
             Collection<Sample> availableSample = SampleManager.getInstance().getAvailableSample();
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(availableSample);
             return ok(json);
-        }catch(Exception e){
+        } catch (Exception e) {
             Logger.warn("Problem while getting the samples", e);
-            return internalServerError("Problem while getting the samples : "+e.getMessage());
+            return internalServerError("Problem while getting the samples : " + e.getMessage());
         }
     }
 
-    public static Result reportError() {
-        return play.mvc.Results.TODO;
+    public static Result reportError(String sourceCode, String userEmail, String stdOut, String stdErr, String compilationErr) {
+        Report report;
+        //Compilation error
+        if (stdErr == null || stdErr.trim().isEmpty()) {
+            report = ReportManager.getInstance().createReportCompilation(sourceCode, stdOut, compilationErr, userEmail);
+        }
+        //Execution error
+        else {
+            report = ReportManager.getInstance().createReportExecution(sourceCode, stdOut, stdErr, userEmail);
+        }
+        boolean sent = ReportManager.getInstance().sendReport(report);
+        return ok(""+sent);
     }
 }
