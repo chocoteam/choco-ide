@@ -1,10 +1,15 @@
 package datas.report;
 
+import play.Logger;
+import play.libs.mailer.Email;
+
 /**
  * Class to create and sent report to admin.
  * Created by Mathieu on 26/05/2015.
  */
 public class ReportManager {
+    //@Inject
+    //private MailerClient mailerClient;
     private static ReportManager instance;
 
     /**
@@ -17,6 +22,12 @@ public class ReportManager {
 
     public boolean sendReport(Report report) {
         //TODO
+        try {
+            Email reportEmail = new Email();
+            reportEmail.setSubject("ChocoIDE Error Report");
+        }catch(Exception e){
+            Logger.error("Couldn't send the report email ",e);
+        }
         return false;
     }
 

@@ -2,7 +2,7 @@ name := "ChocoIDE"
 
 version := "1.0"
 
-lazy val `chocoide` = (project in file(".")).enablePlugins(PlayScala)
+//lazy val `chocoide` = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.1"
 
@@ -15,6 +15,8 @@ libraryDependencies += "org.jetbrains" % "annotations" % "13.0"
 libraryDependencies += "org.choco-solver" % "choco-solver" % "3.3.1"
 
 libraryDependencies += "com.typesafe.play" %% "play-mailer" % "2.4.1"
+
+libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.1"
 
 unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
 
