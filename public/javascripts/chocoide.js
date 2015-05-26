@@ -1,22 +1,22 @@
 // Global variable for Choco samples
 var samples;
 
-window.onload = function() {
+window.onload = function () {
     // Fullfill drilldown list with Choco samples
     updateSamples();
 
     // Initializing Ace editor
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/java");
+    editor.getSession().setMode("ace/mode/choco");
     editor.$blockScrolling = Infinity;
 
     // Event handler when selected value has changed
-    $('#samples').change(function() {
+    $('#samples').change(function () {
         var filenameSelectedSample = $('#samples option:selected').val();
 
         var jsonSamples = jQuery.parseJSON(samples);
-        jsonSamples.forEach(function(jsonSample) {
+        jsonSamples.forEach(function (jsonSample) {
             if (filenameSelectedSample == jsonSample.filename) {
                 editor.getSession().setValue(jsonSample.content);
             }
@@ -33,7 +33,7 @@ function updateSamples() {
         type: "get"
     });
 
-    request.done(function (response, textStatus, jqXHR){
+    request.done(function (response, textStatus, jqXHR) {
         // Updating the model
         samples = response;
 
@@ -42,7 +42,7 @@ function updateSamples() {
         var jsonSamples = jQuery.parseJSON(response);
 
         // Updating the drilldown
-        jsonSamples.forEach(function(jsonSample) {
+        jsonSamples.forEach(function (jsonSample) {
             var option = document.createElement("option");
             option.text = jsonSample.name;
             option.value = jsonSample.filename;
@@ -50,13 +50,17 @@ function updateSamples() {
         });
     });
 
-    request.fail(function (jqXHR, textStatus, errorThrown){
+    request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
         console.error(
-            "The following error occurred: "+
+            "The following error occurred: " +
             textStatus, errorThrown
         );
     });
+}
+
+function defineAceKeywords(){
+
 }
 
 
@@ -69,49 +73,44 @@ function compile() {
     var request = $.ajax({
         url: "/compile",
         type: "post",
-        data: { body: code }
+        data: {body: code}
     });
 
     // Callback handler that will be called on success - HTTP 200 OK
-    request.done(function (response, textStatus, jqXHR){
-        console.innerHTML="<p>"+textStatus+"</p>";
-    });
-
-    // Callback handler that will be called on failure
-    request.fail(function (jqXHR, textStatus, errorThrown){
-        // bouchonnage
-        var response = '{"Errors":"Duplicate import of package fr.toto","Events":[{"Message":"Hello guys","Kind":"stdout","Delay":0},{"Message":"2009/11/10 23:00:00 Error..","Kind":"stderr","Delay":0}]}';
-
+    request.done(function (response, textStatus, jqXHR) {
         var jsonObject = jQuery.parseJSON(response);
         var compilationMessage = jsonObject.Errors;
         var runtimeEvents = jsonObject.Events;
 
-        if(compilationMessage != "") {
-            console.innerHTML = "<p style=\"color:red; background-color: black\">Error during compilation : " + compilationMessage + "</p>";
+        if (compilationMessage != "") {
+            console.innerHTML = "<p class='error'>Error during compilation : " + compilationMessage + "</p>";
         }
 
-        runtimeEvents.forEach(function(runtimeEvent) {
-            var textColor = "blue";
-            if(runtimeEvent.Kind == "stdout") {
+        runtimeEvents.forEach(function (runtimeEvent) {
+            var textColorClass = "success";
+            if (runtimeEvent.Kind == "stdout") {
 
             }
-            else if(runtimeEvent.Kind == "stderr") {
-                textColor = "red"
+            else if (runtimeEvent.Kind == "stderr") {
+                textColorClass = "error"
             }
             else {
                 // ????
             }
-            console.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.Message + "</p>";
+            console.innerHTML += "<p class='"+textColor+"'>" + runtimeEvent.Message + "</p>";
         });
     });
 
+
     // Callback handler that will be called on failure
-    request.fail(function (jqXHR, textStatus, errorThrown){
+    request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
         console.error(
-            "The following error occurred: "+
+            "The following error occurred: " +
             textStatus, errorThrown
         );
+        console.innerHTML="<p class='error'>Server Error, please try again</p>";
+
     });
 
     // Callback handler that will always be called
