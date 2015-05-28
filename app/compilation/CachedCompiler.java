@@ -16,20 +16,18 @@
  * limitations under the License.
  */
 
-package net.openhft.compiler;
+package compilation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
+import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static net.openhft.compiler.CompilerUtils.writeBytes;
-import static net.openhft.compiler.CompilerUtils.writeText;
 
 @SuppressWarnings("StaticNonFinalField")
 public class CachedCompiler {
@@ -55,28 +53,29 @@ public class CachedCompiler {
         }
     }
 
-    public Class loadFromJava(@NotNull String className, @NotNull String javaCode, ClassLoader cl) throws ClassNotFoundException {
-        return loadFromJava(cl, className, javaCode);
+    public Class loadFromJava(@NotNull String className, @NotNull String javaCode, ClassLoader cl, DiagnosticListener diagnosticListener) throws ClassNotFoundException {
+        return loadFromJava(cl, className, javaCode, diagnosticListener);
     }
 
     @NotNull
-    Map<String, byte[]> compileFromJava(@NotNull String className, @NotNull String javaCode) {
+    Map<String, byte[]> compileFromJava(@NotNull String className, @NotNull String javaCode, DiagnosticListener<JavaFileObject> diagnosticListener) {
         Iterable<? extends JavaFileObject> compilationUnits;
         if (sourceDir != null) {
             String filename = className.replaceAll("\\.", '\\' + File.separator) + ".java";
             File file = new File(sourceDir, filename);
-            writeText(file, javaCode);
+            CompilerUtils.writeText(file, javaCode);
             compilationUnits = CompilerUtils.s_standardJavaFileManager.getJavaFileObjects(file);
         } else {
             javaFileObjects.add(new JavaSourceFromString(className, javaCode));
             compilationUnits = javaFileObjects;
         }
-        // reuse the same file manager to allow caching of jar files
-        CompilerUtils.s_compiler.getTask(null, CompilerUtils.s_fileManager, diagnostic -> System.out.println("ERREUR : " + diagnostic), null, null, compilationUnits).call();
+
+        CompilerUtils.s_compiler.getTask(null, CompilerUtils.s_fileManager, diagnosticListener, null, null, compilationUnits).call();
+
         return CompilerUtils.s_fileManager.getAllBuffers();
     }
 
-    public Class loadFromJava(@NotNull ClassLoader classLoader, @NotNull String className, @NotNull String javaCode) throws ClassNotFoundException {
+    public Class loadFromJava(@NotNull ClassLoader classLoader, @NotNull String className, @NotNull String javaCode, DiagnosticListener<JavaFileObject> diagnosticListener) throws ClassNotFoundException {
         System.out.println(" --- classLoader lors du loadFromJava de " + className + " -- AVANT");
         debugClassLoader(classLoader);
 
@@ -87,7 +86,7 @@ public class CachedCompiler {
                 return getExistingLoadedClassesMap(classLoader).get(className);
         }
 
-        for (Map.Entry<String, byte[]> entry : compileFromJava(className, javaCode).entrySet()) {
+        for (Map.Entry<String, byte[]> entry : compileFromJava(className, javaCode, diagnosticListener).entrySet()) {
             String className2 = entry.getKey();
             synchronized (loadedClassesMap) {
                 if (getExistingLoadedClassesMap(classLoader).containsKey(className2))
@@ -96,7 +95,7 @@ public class CachedCompiler {
             byte[] bytes = entry.getValue();
             if (classDir != null) {
                 String filename = className2.replaceAll("\\.", '\\' + File.separator) + ".class";
-                boolean changed = writeBytes(new File(classDir, filename), bytes);
+                boolean changed = CompilerUtils.writeBytes(new File(classDir, filename), bytes);
                 if (changed) {
                     LoggerFactory.getLogger(CachedCompiler.class).info("Updated {} in {}", className2, classDir);
                 }
