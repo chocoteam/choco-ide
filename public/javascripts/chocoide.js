@@ -77,6 +77,8 @@ function compile() {
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
+        console.innerHTML = "";
+
         compilationEvents.forEach(function(compilationEvent) {
             console.innerHTML += "<p style=\" color:red; background-color: black\">" + "Error during compilation : " + compilationEvent + "</p>";
         });
