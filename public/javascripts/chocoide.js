@@ -13,7 +13,7 @@ window.onload = function() {
 
     // Event handler when selected value has changed
     $('#samples').change(function() {
-        var filenameSelectedSample = $('#samples option:selected').val();
+        var filenameSelectedSample = $('#samples').find('option:selected').val();
 
         var jsonSamples = jQuery.parseJSON(samples);
         jsonSamples.forEach(function(jsonSample) {
@@ -22,7 +22,7 @@ window.onload = function() {
             }
         });
     });
-}
+};
 
 function updateSamples() {
     var select = $('#samples');

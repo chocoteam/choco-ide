@@ -9,7 +9,19 @@ public class RunEvent {
     private final String kind;
     private final int delay;
 
-    private enum Kind{
+    public String getMessage() {
+        return message;
+    }
+
+    public String getKind() {
+        return kind;
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public enum Kind{
         OUT("stdout"),
         ERR("stderr");
 
@@ -17,6 +29,10 @@ public class RunEvent {
 
         Kind(String desc) {
             this.desc = desc;
+        }
+
+        public String toString(){
+            return this.desc;
         }
     }
 
@@ -26,4 +42,6 @@ public class RunEvent {
         this.kind = kind;
         this.delay = delay;
     }
+
+
 }

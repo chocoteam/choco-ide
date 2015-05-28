@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package net.openhft.compiler;
+package compilation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,9 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static net.openhft.compiler.CompilerUtils.writeBytes;
-import static net.openhft.compiler.CompilerUtils.writeText;
 
 @SuppressWarnings("StaticNonFinalField")
 public class CachedCompiler {
@@ -66,7 +63,7 @@ public class CachedCompiler {
         if (sourceDir != null) {
             String filename = className.replaceAll("\\.", '\\' + File.separator) + ".java";
             File file = new File(sourceDir, filename);
-            writeText(file, javaCode);
+            CompilerUtils.writeText(file, javaCode);
             compilationUnits = CompilerUtils.s_standardJavaFileManager.getJavaFileObjects(file);
         } else {
             javaFileObjects.add(new JavaSourceFromString(className, javaCode));
@@ -98,7 +95,7 @@ public class CachedCompiler {
             byte[] bytes = entry.getValue();
             if (classDir != null) {
                 String filename = className2.replaceAll("\\.", '\\' + File.separator) + ".class";
-                boolean changed = writeBytes(new File(classDir, filename), bytes);
+                boolean changed = CompilerUtils.writeBytes(new File(classDir, filename), bytes);
                 if (changed) {
                     LoggerFactory.getLogger(CachedCompiler.class).info("Updated {} in {}", className2, classDir);
                 }

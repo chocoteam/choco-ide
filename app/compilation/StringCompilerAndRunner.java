@@ -1,9 +1,8 @@
 package compilation;
 
-import net.openhft.compiler.CachedCompiler;
-
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,22 +17,42 @@ public class StringCompilerAndRunner {
     }
 
     public CompilationAndRunResult compileAndRun(String code) throws IllegalAccessException, InstantiationException {
-        CachedCompiler cc = new CachedCompiler(null, null);
-        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
-
 
         List<RunEvent> runEvents = new ArrayList<RunEvent>();
+        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
 
         try {
-            Class clazz = cc.loadFromJava("compilation.ChocoProjectImpl", code, cl, collector);
-            ChocoProject instance = (ChocoProject) clazz.newInstance();
-            instance.init();
-            instance.run();
+            ChocoProject instance = compileCode(code, collector);
+
+            EventsRecorder eventsRecorder = new EventsRecorder();
+            OutputRedirector redirector = new OutputRedirector(eventsRecorder);
+            runCode(instance);
+            redirector.restore();
+
+            runEvents.addAll(redirector.getEvents());
+
         } catch (ClassNotFoundException e) {
             System.err.println("Erreur à la compilation !");
+        } catch (FileNotFoundException e) {
+            System.err.println("Erreur de la création des streams ! " + e.getMessage());
         }
 
         return new CompilationAndRunResult(collector, runEvents);
+    }
+
+    private ChocoProject compileCode(String code, DiagnosticCollector<JavaFileObject> collector) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        CachedCompiler cc = new CachedCompiler(null, null);
+        Class clazz = cc.loadFromJava("compilation.ChocoProjectImpl", code, cl, collector);
+        return (ChocoProject) clazz.newInstance();
+    }
+
+    private void runCode(ChocoProject instance) {
+        try {
+            instance.run();
+        } catch (Exception e) {
+            System.err.println("Erreur à l'execution !");
+            throw e;
+        }
     }
 
     private void debugDiagnostics(DiagnosticCollector<JavaFileObject> collector) {
