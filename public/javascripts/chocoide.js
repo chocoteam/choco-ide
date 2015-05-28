@@ -52,7 +52,7 @@ function updateSamples() {
 
     request.fail(function (jqXHR, textStatus, errorThrown){
         // Log the error to the console
-        console.error(
+        console.log(
             "The following error occurred: "+
             textStatus, errorThrown
         );
@@ -101,7 +101,7 @@ function compile() {
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown){
         // Log the error to the console
-        console.error(
+        console.log(
             "The following error occurred: "+
             textStatus, errorThrown
         );
