@@ -74,6 +74,8 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
+        console.log("Request done !");
+
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
