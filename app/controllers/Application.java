@@ -38,6 +38,8 @@ public class Application extends Controller {
             String code = mapParameters.get("body")[0] + INTERFACE_CHOCO;
             System.out.println("Code reçu : " + code);
             ClassLoader cl = Play.application().classloader();
+            //MyClassLoader tempCl = new MyClassLoader(cl);
+
             StringCompilerAndRunner compilerAndRunner = new StringCompilerAndRunner(cl);
             CompilationAndRunResult result = compilerAndRunner.compileAndRun(code);
             return ok(new ObjectMapper().<JsonNode>valueToTree(result));

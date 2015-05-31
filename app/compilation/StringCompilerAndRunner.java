@@ -32,7 +32,7 @@ public class StringCompilerAndRunner {
             runEvents.addAll(redirector.getEvents());
 
         } catch (ClassNotFoundException e) {
-            System.err.println("Erreur à la compilation !");
+            System.err.println("Erreur à la compilation !" + e.getMessage());
         } catch (FileNotFoundException e) {
             System.err.println("Erreur de la création des streams ! " + e.getMessage());
         }
@@ -41,7 +41,7 @@ public class StringCompilerAndRunner {
     }
 
     private ChocoProject compileCode(String code, DiagnosticCollector<JavaFileObject> collector) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        CachedCompiler cc = new CachedCompiler(null, null);
+        CachedCompiler cc = new CachedCompiler();
         Class clazz = cc.loadFromJava("compilation.ChocoProjectImpl", code, cl, collector);
         return (ChocoProject) clazz.newInstance();
     }
