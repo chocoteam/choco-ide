@@ -1,12 +1,19 @@
 package controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import compilation.StringCompilerAndRunner;
+import datas.samples.Sample;
+import datas.samples.SampleManager;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 
 import java.lang.Package;
 import java.rmi.server.LoaderHandler;
+import java.util.List;
 import java.util.Map;
 
 public class Application extends Controller {
@@ -37,6 +44,13 @@ public class Application extends Controller {
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Result getCodeSampleList() throws JsonProcessingException {
+        List<Sample> availableSample = SampleManager.getInstance().getAvailableSample();
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(availableSample);
+        return ok(json);
     }
 
     public static Result getKeywords() {
