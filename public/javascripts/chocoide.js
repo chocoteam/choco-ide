@@ -52,7 +52,7 @@ function updateSamples() {
 
     request.fail(function (jqXHR, textStatus, errorThrown){
         // Log the error to the console
-        console.error(
+        console.log(
             "The following error occurred: "+
             textStatus, errorThrown
         );
@@ -63,7 +63,7 @@ function updateSamples() {
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
-    var console = document.getElementById('console');
+    var outputConsole = document.getElementById('console');
 
     // Fire the HTTP POST request
     var request = $.ajax({
@@ -74,11 +74,15 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
+        console.log("Request done !");
+
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
+        outputConsole.innerHTML = "";
+
         compilationEvents.forEach(function(compilationEvent) {
-            console.innerHTML += "<p style=\" color:red; background-color: black\">" + "Error during compilation : " + compilationEvent + "</p>";
+            outputConsole.innerHTML += "<p style=\" color:red; background-color: black\">" + "Error during compilation : " + compilationEvent + "</p>";
         });
 
         runtimeEvents.forEach(function(runtimeEvent) {
@@ -92,14 +96,14 @@ function compile() {
             else {
                 // ????
             }
-            console.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.message + "</p>";
+            outputConsole.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.message + "</p>";
         });
     });
 
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown){
         // Log the error to the console
-        console.error(
+        console.log(
             "The following error occurred: "+
             textStatus, errorThrown
         );
