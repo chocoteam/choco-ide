@@ -20,6 +20,10 @@ public class ReportManager {
     private boolean useSSL;
     private List<String> emailTo;
 
+    private ReportManager(){
+        initMailParam();
+    }
+
     /**
      * @return a unique instance of the report manager
      */
@@ -72,7 +76,7 @@ public class ReportManager {
             //Console
             email.setMsg("Bonjour,\nUn utilisateur a reporté un problème sur le site ChocoIDE.\nVoici son message :\n\n"+report.getMessage());
             //Attachement
-            createAttachement(email,report);
+            createAttachement(email, report);
             //Send
             email.send();
             return true;
