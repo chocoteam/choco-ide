@@ -70,7 +70,7 @@ public class ReportManager {
             initSendingParam(email);
             email.setFrom(report.getSenderEmail());
             //Console
-            email.setMsg("Bonjour,\nUn utilisateur a reporté un problème sur le site ChocoIDE.\nVoici son message :\n\n"+report.getMessage());
+            email.setMsg("Bonjour,\nUn utilisateur a reportÃ© un problÃ¨me sur le site ChocoIDE.\nVoici son message :\n\n"+report.getMessage());
             //Attachement
             createAttachement(email,report);
             //Send

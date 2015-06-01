@@ -50,7 +50,7 @@ public class Application extends Controller {
         try {
             final Map<String, String[]> mapParameters = request().body().asFormUrlEncoded();
             String code = mapParameters.get("body")[0] + INTERFACE_CHOCO;
-            System.out.println("Code reçu : " + code);
+            System.out.println("Code reÃ§u : " + code);
             ClassLoader cl = Play.application().classloader();
             //MyClassLoader tempCl = new MyClassLoader(cl);
 
