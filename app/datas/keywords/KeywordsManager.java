@@ -11,7 +11,7 @@ import java.util.jar.JarInputStream;
  */
 public class KeywordsManager {
 
-    private static String startPackageName = "org/chocosolver";
+    private final static String START_PACKAGE_NAME = "org/chocosolver";
 
 
     /**
@@ -23,10 +23,10 @@ public class KeywordsManager {
 
         String classes = "";
         URL url = KeywordsManager.class.getClassLoader().getResource(
-                startPackageName);
+                START_PACKAGE_NAME);
         System.out.println(url.getPath());
         String path = url.getPath().replaceAll("file:/", "")
-                .replaceAll("!/"+startPackageName, "");
+                .replaceAll("!/"+START_PACKAGE_NAME, "");
         System.out.println(path);
         try {
             JarInputStream crunchifyJarFile = new JarInputStream(new FileInputStream(path));
