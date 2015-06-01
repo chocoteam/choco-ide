@@ -12,9 +12,13 @@ window.onload = function () {
     editor.$blockScrolling = Infinity;
 
     // Event handler when selected value has changed
-
+<<<<<<< HEAD
+    $('#samples').change(function() {
+        var filenameSelectedSample = $('#samples').find('option:selected').val();
+=======
     $('#samples').change(function () {
         var filenameSelectedSample = $('#samples option:selected').val();
+>>>>>>> feature/higlighting-choco
 
         var jsonSamples = jQuery.parseJSON(samples);
         jsonSamples.forEach(function (jsonSample) {

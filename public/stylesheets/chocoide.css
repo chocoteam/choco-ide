@@ -48,3 +48,12 @@ header a:hover {
     height: 300px;
     border: 1px solid black;
 }
+
+.error {
+    color: red;
+    background-color: black;
+}
+
+.success {
+    color: blue;
+}
