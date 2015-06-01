@@ -75,15 +75,23 @@ public class Application extends Controller {
         }
     }
 
-    public static Result reportError(String message,String sourceCode, String userEmail, String stdOut, String stdErr, String compilationErr) {
+    public static Result reportError() {
+        final Map<String, String[]> mapParameters = request().body().asFormUrlEncoded();
+        String sourceCode = mapParameters.get("sourceCode")[0];
+        String comment = mapParameters.get("comment")[0];
+        String userEmail = mapParameters.get("userEmail")[0];
+        String stdOut = mapParameters.get("stdOut")[0];
+        String stdErr = mapParameters.get("stdErr")[0];
+        String compilationErr = mapParameters.get("compilationErr")[0];
+
         Report report;
         //Compilation error
         if (stdErr == null || stdErr.trim().isEmpty()) {
-            report = ReportManager.getInstance().createReportCompilation(message,sourceCode, stdOut, compilationErr, userEmail);
+            report = ReportManager.getInstance().createReportCompilation(comment,sourceCode, stdOut, compilationErr, userEmail);
         }
         //Execution error
         else {
-            report = ReportManager.getInstance().createReportExecution(message,sourceCode, stdOut, stdErr, userEmail);
+            report = ReportManager.getInstance().createReportExecution(comment,sourceCode, stdOut, stdErr, userEmail);
         }
         boolean sent = false;
         if (Report.isValidEmail(report.getSenderEmail())) {
