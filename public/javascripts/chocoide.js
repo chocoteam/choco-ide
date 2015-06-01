@@ -12,8 +12,8 @@ window.onload = function () {
     editor.$blockScrolling = Infinity;
 
     // Event handler when selected value has changed
-
     $('#samples').change(function () {
+
         var filenameSelectedSample = $('#samples option:selected').val();
 
         var jsonSamples = jQuery.parseJSON(samples);
@@ -23,7 +23,18 @@ window.onload = function () {
             }
         });
     });
-};
+
+    // Event handler when submitting a report
+    $("#reportForm").submit(function(event) {
+        event.preventDefault();
+        var email = $('#emailReport').val();
+        var comment = $('#commentReport').val();
+        sendReport(email, comment); // call the report service
+        $('#reportModal').modal('hide'); // hide the report form
+        $('#reportForm')[0].reset(); // clear the report form
+        return false; // avoiding event to be processed
+    });
+}
 
 function updateSamples() {
     var select = $('#samples');
@@ -53,7 +64,7 @@ function updateSamples() {
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
-        console.log(
+        console.error(
             "The following error occurred: "+
             textStatus, errorThrown
         );
@@ -68,7 +79,7 @@ function defineAceKeywords(){
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
-    var outputConsole = document.getElementById('console');
+    var console = document.getElementById('console');
 
     // Fire the HTTP POST request
     var request = $.ajax({
@@ -79,29 +90,19 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
-        console.log("Request done !");
-
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
-        outputConsole.innerHTML = "";
-
         compilationEvents.forEach(function(compilationEvent) {
-            outputConsole.innerHTML += "<p style=\" color:red; background-color: black\">" + "Error during compilation : " + compilationEvent + "</p>";
+            console.innerHTML += "<p class=\"compilationErr\">" + "Error during compilation : " + compilationEvent + "</p>";
         });
 
         runtimeEvents.forEach(function(runtimeEvent) {
-            var textColor = "blue";
-            if(runtimeEvent.kind == "stdout") {
-
+            var className = "stdOut";
+            if(runtimeEvent.kind == "stderr") {
+                className = "stdErr"
             }
-            else if(runtimeEvent.kind == "stderr") {
-                textColor = "red"
-            }
-            else {
-                // ????
-            }
-            outputConsole.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.message + "</p>";
+            console.innerHTML += "<p class="+className+">" + runtimeEvent.message + "</p>";
         });
     });
 
@@ -109,7 +110,56 @@ function compile() {
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
-        console.log(
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown
+        );
+    });
+}
+
+
+function sendReport(userEmail, comment) {
+    var editor = ace.edit("editor");
+    var sourceCode = editor.getSession().getValue();
+
+    var compilationErrs ="", stdOuts="", stdErrs="";
+    $('.compilationErr').each(function() {
+        compilationErrs += $(this).text() + "\n"
+    });
+
+    $('.stdOut').each(function() {
+        stdOuts += $(this).text() + "\n"
+    });
+
+    $('.stdErr').each(function() {
+        stdErrs += $(this).text() + "\n"
+    });
+
+    // Fire the HTTP POST request
+    var request = $.ajax({
+        url: "/reportError",
+        type: "post",
+        data: {
+            sourceCode: sourceCode,
+            userEmail: userEmail,
+            stdOut: stdOuts,
+            stdErr: stdErrs,
+            compilationErr: compilationErrs,
+            comment: comment
+        }
+    });
+
+    // Callback handler that will be called on success - HTTP 200 OK
+    request.done(function (response, textStatus, jqXHR){
+        $('#alertReportSuccess').modal('show');
+    });
+
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
+        $('#alertReportFailure').modal('show');
+
+        // Log the error to the console
+        console.error(
             "The following error occurred: "+
             textStatus, errorThrown
         );
