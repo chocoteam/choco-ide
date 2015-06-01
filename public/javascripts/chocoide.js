@@ -26,17 +26,12 @@ window.onload = function() {
     // Event handler when submitting a report
     $("#reportForm").submit(function(event) {
         event.preventDefault();
-        alert( "Handler for .submit() called." );
         var email = $('#emailReport').val();
         var comment = $('#commentReport').val();
-        console.log(email + " - " + comment);
-
         sendReport(email, comment); // call the report service
-
         $('#reportModal').modal('hide'); // hide the report form
         $('#reportForm')[0].reset(); // clear the report form
-
-        return false;
+        return false; // avoiding event to be processed
     });
 }
 
@@ -102,7 +97,7 @@ function compile() {
             if(runtimeEvent.kind == "stderr") {
                 className = "stdErr"
             }
-            console.innerHTML += "<p class="+className+ "\">" + runtimeEvent.message + "</p>";
+            console.innerHTML += "<p class="+className+">" + runtimeEvent.message + "</p>";
         });
     });
 
