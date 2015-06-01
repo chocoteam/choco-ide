@@ -1,16 +1,61 @@
 package compilation;
 
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaFileObject;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by yann on 16/05/15.
  */
 public class StringCompilerAndRunner {
-    private static final String CLASS_NAME = "ChocoProgram";
+    private final ClassLoader cl;
 
-    public void compileAndRun(String code) throws IllegalAccessException, InstantiationException {
-        JavaDynamicCompiler<Runnable> compiler = new JavaDynamicCompiler<>();
-        Class<Runnable> clazz = compiler.compile(null, CLASS_NAME, code);
-        System.out.println(clazz.getName());
-        Runnable r = clazz.newInstance();
-        r.run();
+    public StringCompilerAndRunner(ClassLoader cl) {
+        this.cl = cl;
+    }
+
+    public CompilationAndRunResult compileAndRun(String code) throws IllegalAccessException, InstantiationException {
+
+        List<RunEvent> runEvents = new ArrayList<RunEvent>();
+        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
+
+        try {
+            ChocoProject instance = compileCode(code, collector);
+
+            EventsRecorder eventsRecorder = new EventsRecorder();
+            OutputRedirector redirector = new OutputRedirector(eventsRecorder);
+            runCode(instance);
+            redirector.restore();
+
+            runEvents.addAll(redirector.getEvents());
+
+        } catch (ClassNotFoundException e) {
+            System.err.println("Erreur à la compilation !" + e.getMessage());
+        } catch (FileNotFoundException e) {
+            System.err.println("Erreur de la création des streams ! " + e.getMessage());
+        }
+
+        return new CompilationAndRunResult(collector, runEvents);
+    }
+
+    private ChocoProject compileCode(String code, DiagnosticCollector<JavaFileObject> collector) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        CachedCompiler cc = new CachedCompiler();
+        Class clazz = cc.loadFromJava("compilation.ChocoProjectImpl", code, cl, collector);
+        return (ChocoProject) clazz.newInstance();
+    }
+
+    private void runCode(ChocoProject instance) {
+        try {
+            instance.run();
+        } catch (Exception e) {
+            System.err.println("Erreur à l'execution !");
+            throw e;
+        }
+    }
+
+    private void debugDiagnostics(DiagnosticCollector<JavaFileObject> collector) {
+        collector.getDiagnostics().forEach(System.out::println);
     }
 }
