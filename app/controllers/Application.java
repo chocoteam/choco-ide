@@ -15,19 +15,10 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.Package;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.rmi.server.LoaderHandler;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Map;
 
@@ -109,6 +100,56 @@ public class Application extends Controller {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(chocoClasses);
         return ok(json);
+    }
+
+    /**
+     * Small piece of code in order to try the execution of processes within Heroku
+     * If possible, this method (after some refactoring) will replace the current 'compile' handler
+     * @return HTTP 200 if compilation+execution went OK, HTTP 500 otherwise
+     */
+    public static Result testJava() {
+        try {
+            // Writing Java Source Code to a file
+            PrintWriter writer = new PrintWriter("Main.java", "UTF-8");
+            writer.println("class Main {\n" +
+                    "   public static void main (String[] args){\n" +
+                    "    System.out.println(\"Hello World\");\n" +
+                    "   }\n" +
+                    "}");
+            writer.close();
+
+            // Compiling Java Source Code
+            runProcess("javac Main.java");
+
+            // Executing Java Source Code
+            runProcess("java Main");
+
+            return ok();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return internalServerError(e.getMessage());
+        }
+
+    }
+
+    private static void runProcess(String command) throws IOException {
+        Process p;
+        String s;
+        p = Runtime.getRuntime().exec(command);
+        BufferedReader stdInput = new BufferedReader((new InputStreamReader(p.getInputStream())));
+        BufferedReader stdError = new BufferedReader((new InputStreamReader(p.getErrorStream())));
+
+        // read the output from the command
+        System.out.println("Here is the standard output of the command:\n");
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+        // read any errors from the attempted command
+        System.out.println("Here is the standard error of the command (if any):\n");
+        while ((s = stdError.readLine()) != null) {
+            System.out.println(s);
+        }
     }
 
 }
