@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package net.openhft.compiler;
+package compilation;
 
 import org.jetbrains.annotations.NotNull;
 

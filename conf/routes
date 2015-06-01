@@ -9,6 +9,7 @@ GET         /                         controllers.Application.index
 POST        /compile                  controllers.Application.compile
 GET         /getCodeSampleList        controllers.Application.getCodeSampleList
 POST         /reportError              controllers.Application.reportError(comment:String,sourceCode:String,userEmail:String,stdOut:String,stdErr:String,compilationErr:String)
-
+POST         /reportError              controllers.Application.reportError(comment:String,sourceCode:String,userEmail:String,stdOut:String,stdErr:String,compilationErr:String)
+GET         /getKeywords              controllers.Application.getKeywords
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file             controllers.Assets.at(path="/public", file)

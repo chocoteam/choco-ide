@@ -48,3 +48,16 @@ header a:hover {
     height: 300px;
     border: 1px solid black;
 }
+
+.compilationErr {
+    background-color: red;
+    color: white;
+}
+
+.stdOut {
+    color: blue;
+}
+
+.stdErr {
+    color: red;
+}
