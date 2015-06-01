@@ -27,6 +27,12 @@ public class Report {
      */
     private String sourceCode;
 
+
+    /**
+     * Message from user
+     */
+    private String message;
+
     /**
      * User email address
      */
@@ -65,6 +71,14 @@ public class Report {
 
     public String getSourceCode() {
         return sourceCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public void setSourceCode(String sourceCode) {

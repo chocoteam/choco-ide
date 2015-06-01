@@ -80,17 +80,24 @@ public class Application extends Controller {
         }
     }
 
-    public static Result reportError(String sourceCode, String userEmail, String stdOut, String stdErr, String compilationErr) {
+    public static Result reportError(String message,String sourceCode, String userEmail, String stdOut, String stdErr, String compilationErr) {
         Report report;
         //Compilation error
         if (stdErr == null || stdErr.trim().isEmpty()) {
-            report = ReportManager.getInstance().createReportCompilation(sourceCode, stdOut, compilationErr, userEmail);
+            report = ReportManager.getInstance().createReportCompilation(message,sourceCode, stdOut, compilationErr, userEmail);
         }
         //Execution error
         else {
-            report = ReportManager.getInstance().createReportExecution(sourceCode, stdOut, stdErr, userEmail);
+            report = ReportManager.getInstance().createReportExecution(message,sourceCode, stdOut, stdErr, userEmail);
         }
-        boolean sent = ReportManager.getInstance().sendReport(report);
-        return ok(""+sent);
+        boolean sent = false;
+        if (Report.isValidEmail(report.getSenderEmail())) {
+            sent = ReportManager.getInstance().sendReport(report);
+        }
+        if (!sent) {
+            return internalServerError();
+        } else {
+            return ok();
+        }
     }
 }
