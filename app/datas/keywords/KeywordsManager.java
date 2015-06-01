@@ -24,10 +24,9 @@ public class KeywordsManager {
         String classes = "";
         URL url = KeywordsManager.class.getClassLoader().getResource(
                 START_PACKAGE_NAME);
-        System.out.println(url.getPath());
         String path = url.getPath().replaceAll("file:/", "")
                 .replaceAll("!/"+START_PACKAGE_NAME, "");
-        System.out.println(path);
+
         try {
             JarInputStream crunchifyJarFile = new JarInputStream(new FileInputStream(path));
             JarEntry crunchifyJar;
@@ -48,7 +47,7 @@ public class KeywordsManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Oops.. Encounter an issue while parsing jar" + e.toString());
+            System.out.println("Encounter an issue while parsing jar" + e.toString());
         }
         return classes;
     }
