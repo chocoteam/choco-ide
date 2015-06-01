@@ -20,7 +20,6 @@ import java.util.Map;
 public class Application extends Controller {
 
     private static final String INTERFACE_CHOCO = "interface ChocoProject {" + "\n"
-            + " void init();" + "\n"
             + " void run();" + "\n"
             + "}" + "\n";
 
@@ -39,8 +38,9 @@ public class Application extends Controller {
             String code = mapParameters.get("body")[0] + INTERFACE_CHOCO;
             System.out.println("Code reçu : " + code);
             ClassLoader cl = Play.application().classloader();
-            StringCompilerAndRunner compilerAndRunner = new StringCompilerAndRunner(cl);
+            //MyClassLoader tempCl = new MyClassLoader(cl);
 
+            StringCompilerAndRunner compilerAndRunner = new StringCompilerAndRunner(cl);
             CompilationAndRunResult result = compilerAndRunner.compileAndRun(code);
             return ok(new ObjectMapper().<JsonNode>valueToTree(result));
         } catch(Exception e){
