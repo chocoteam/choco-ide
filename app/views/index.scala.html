@@ -17,12 +17,15 @@
         <div id="editor" class="col-xs-12 col-md-6"></div>
         <div id="console" class="col-xs-12 col-md-6"></div>
         <div id="not-editor" class="col-xs-12">
-            <select id="samples"></select>
-            <button type="button" class="btn btn-default btn-lg" onclick="compile()">
+            <span class="row text-left">
+                <p class="col-xs-6">Choose a sample to run : </p><select id="samples" class="col-xs-6"></select>
+            </span>
+            <p class="col-xs-12">Or drag a class of your own !</p>
+            <button type="button" class="btn btn-success btn-lg col-xs-6 col-md-3 col-md-offset-2" onclick="compile()">
                 <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
                 Run
             </button>
-            <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#reportModal">
+            <button type="button" class="btn btn-danger btn-lg col-xs-6 col-md-3 col-md-offset-1" data-toggle="modal" data-target="#reportModal">
                 <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
                 Report
             </button>
