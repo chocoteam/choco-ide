@@ -5,11 +5,12 @@
 # Home page
 GET         /                         controllers.Application.index
 
-# Home page
+# Services
 POST        /compile                  controllers.Application.compile
 GET         /getCodeSampleList        controllers.Application.getCodeSampleList
-GET         /reportError              controllers.Application.reportError(sourceCode:String,userEmail:String,stdOut:String,stdErr:String,compilationErr:String)
+POST        /reportError              controllers.Application.reportError
 GET         /getKeywords              controllers.Application.getKeywords
+GET         /testJava                 controllers.Application.testJava
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file             controllers.Assets.at(path="/public", file)
