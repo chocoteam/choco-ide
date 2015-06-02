@@ -57,6 +57,7 @@ header a:hover {
 
 .success {
     color: blue;
+}
 
 .compilationErr {
     background-color: red;
@@ -69,5 +70,4 @@ header a:hover {
 
 .stdErr {
     color: red;
->>>>>>> 78c49ec70eb807de904622511a5fda4dd867bb7d
 }

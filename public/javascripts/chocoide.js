@@ -178,15 +178,41 @@ function sendReport(userEmail, comment) {
 }
 
 function settingDragNDrop(){
-    var dropZone = document.getElementById("editor");
+
 
     window.ondragover = function(e){
         e.preventDefault();
+        document.getElementById("header").style.filter="blur(5px)";
+        document.getElementById("footer").style.filter="blur(5px)";
+        document.getElementById("not-editor").style.filter="blur(5px)";
+        document.getElementById("console").style.backgroundColor="lightgrey";
+        document.getElementById("console").style.filter="blur(5px)";
     };
 
-    window.ondrop = function(e){
-        e.preventDefault();
+    var unblur = function () {
+        document.getElementById("header").style.filter="";
+        document.getElementById("footer").style.filter="";
+        document.getElementById("not-editor").style.filter="";
+        document.getElementById("console").style.filter="";
+        document.getElementById("console").style.backgroundColor="white";
     };
+
+    window.ondragend = function(e){
+        unblur();
+    };
+
+    window.ondragleave = function(e){
+        e.preventDefault();
+        unblur();
+    };
+
+    document.body.ondrop = function(e){
+        e.preventDefault();
+        console.log("wesh");
+        unblur();
+    };
+
+    var dropZone = document.getElementById("editor");
 
     dropZone.ondragover = function(e){
         e.dataTransfer.effectAllowed = 'copy';
@@ -195,6 +221,7 @@ function settingDragNDrop(){
     };
 
     dropZone.ondrop = function(e){
+        console.log("okok");
         e.preventDefault();
         var data = e.dataTransfer;
         if ('files' in data && data.files[0].type.indexOf("text")!=-1){
