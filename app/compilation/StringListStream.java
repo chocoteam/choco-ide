@@ -1,7 +1,6 @@
 package compilation;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ public class StringListStream extends PrintStream {
     private static final String NOT_SUPPORTED = "Operation non supportée !";
     List<String> list;
 
-    protected StringListStream(ByteArrayOutputStream outputStream) throws FileNotFoundException {
+    protected StringListStream(ByteArrayOutputStream outputStream) {
         super(outputStream);
         list = new ArrayList<>();
     }
