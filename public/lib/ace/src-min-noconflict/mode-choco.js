@@ -1066,7 +1066,6 @@ ace.define("ace/mode/java_highlight_rules",["require","exports","module","ace/li
 
         var buildinConstants = ("null|Infinity|NaN|undefined");
 
-
         var langClasses = (
         "AbstractMethodError|AssertionError|ClassCircularityError|"+
         "ClassFormatError|Deprecated|EnumConstantNotPresentException|"+
@@ -1091,7 +1090,7 @@ ace.define("ace/mode/java_highlight_rules",["require","exports","module","ace/li
         "ArrayStoreException|ClassCastException|LinkageError|"+
         "NoClassDefFoundError|ClassNotFoundException|RuntimeException|"+
         "Exception|ThreadDeath|Error|Throwable|System|ClassLoader|"+
-        "Cloneable|Class|CharSequence|Comparable|String"+chocoLangClasses
+        "Cloneable|Class|CharSequence|Comparable|String|"+chocoLangClasses
         );
 
         var keywordMapper = this.createKeywordMapper({

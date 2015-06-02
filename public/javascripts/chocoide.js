@@ -6,10 +6,15 @@ window.onload = function () {
     updateSamples();
 
     // Initializing Ace editor
+    ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/choco");
     editor.$blockScrolling = Infinity;
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: false
+    });
 
     // Event handler when selected value has changed
     $('#samples').change(function () {
