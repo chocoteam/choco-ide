@@ -39,6 +39,8 @@ window.onload = function () {
         $('#reportForm')[0].reset(); // clear the report form
         return false; // avoiding event to be processed
     });
+
+    settingDragNDrop();
 }
 
 function updateSamples() {
@@ -173,4 +175,39 @@ function sendReport(userEmail, comment) {
         console.innerHTML="<p class='error'>Server Error, please try again</p>";
 
     });
+}
+
+function settingDragNDrop(){
+    var dropZone = document.getElementById("editor");
+
+    window.ondragover = function(e){
+        e.preventDefault();
+    };
+
+    window.ondrop = function(e){
+        e.preventDefault();
+    };
+
+    dropZone.ondragover = function(e){
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.dropEffect = 'copy';
+        e.preventDefault();
+    };
+
+    dropZone.ondrop = function(e){
+        e.preventDefault();
+        var data = e.dataTransfer;
+        if ('files' in data && data.files[0].type.indexOf("text")!=-1){
+            var reader = new FileReader();
+            reader.readAsText(e.dataTransfer.files[0]);
+
+            reader.onloadend=function() {
+                if (reader.readyState==reader.DONE) {
+                    ace.edit("editor").getSession().setValue(reader.result);
+                }
+            };
+        }else{
+            console.log("No valid element dropped");
+        }
+    };
 }
