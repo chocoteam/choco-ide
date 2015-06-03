@@ -21,16 +21,23 @@ public class StringCompilerAndRunner {
 
         List<RunEvent> runEvents = new ArrayList<RunEvent>();
         compileCode(code);
-        EventsRecorder eventsRecorder = new EventsRecorder();
-        OutputRedirector redirector = new OutputRedirector(eventsRecorder);
-        try {
-            runCode();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        if(canRunCode()) {
+            EventsRecorder eventsRecorder = new EventsRecorder();
+            EventsRecorder recorder = eventsRecorder;
+            try {
+                runCode();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            runEvents.addAll(recorder.getEvents());
         }
-        runEvents.addAll(redirector.getEvents());
 
         return compilationAndRunResult;
+    }
+
+    private boolean canRunCode() {
+        return this.compilationAndRunResult.getErrors().isEmpty();
     }
 
     private void compileCode(String code) throws IOException {

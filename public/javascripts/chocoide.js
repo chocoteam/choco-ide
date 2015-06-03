@@ -103,7 +103,7 @@ function compile() {
         consoleCode.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
-            consoleCode.innerHTML += "<p class=\"compilationErr\">" + "Error during compilation : " + compilationEvent + "</p>";
+            consoleCode.innerHTML += "<p class=\"compilationErr\"><pre>" + "Error during compilation : " + compilationEvent + "</pre></p>";
         });
 
         runtimeEvents.forEach(function(runtimeEvent) {
@@ -111,7 +111,7 @@ function compile() {
             if(runtimeEvent.kind == "stderr") {
                 className = "stdErr"
             }
-            consoleCode.innerHTML += "<p class="+className+">" + runtimeEvent.message + "</p>";
+            consoleCode.innerHTML += "<p class="+className+"><pre>" + runtimeEvent.message + "</pre></p>";
         });
     });
 
