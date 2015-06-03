@@ -9,9 +9,9 @@ import java.util.List;
  */
 public class StringCompilerAndRunner {
 
-    private static final String MAIN_FILE = "tmp/src/Main.java";
-    private static final String CALL_JAVA_MAIN = "java -cp tmp/bin/:lib/* Main";
-    private static final String CALL_JAVAC_MAIN = "javac -d tmp/bin/ -cp lib/* tmp/src/Main.java";
+    private static final String MAIN_FILE = "ctmp/src/Main.java";
+    private static final String CALL_JAVA_MAIN = "java -cp ctmp/bin/:lib/* Main";
+    private static final String CALL_JAVAC_MAIN = "javac -d ctmp/bin/ -cp lib/* ctmp/src/Main.java";
     private CompilationAndRunResult compilationAndRunResult;
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
