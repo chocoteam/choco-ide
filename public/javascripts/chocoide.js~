@@ -1,13 +1,18 @@
 // Global variable for Choco samples
 var samples;
 
+<<<<<<< HEAD
 window.onload = function() {
+=======
+window.onload = function () {
+>>>>>>> release/half-sprint-2
     // Fullfill drilldown list with Choco samples
     updateSamples();
 
     // Initializing Ace editor
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
+<<<<<<< HEAD
     editor.getSession().setMode("ace/mode/java");
     editor.$blockScrolling = Infinity;
 
@@ -17,6 +22,22 @@ window.onload = function() {
 
         var jsonSamples = jQuery.parseJSON(samples);
         jsonSamples.forEach(function(jsonSample) {
+=======
+    editor.getSession().setMode("ace/mode/choco");
+    editor.$blockScrolling = Infinity;
+
+    // Event handler when selected value has changed
+<<<<<<< HEAD
+
+    $('#samples').change(function () {
+=======
+    $('#samples').change(function() {
+>>>>>>> 78c49ec70eb807de904622511a5fda4dd867bb7d
+        var filenameSelectedSample = $('#samples option:selected').val();
+
+        var jsonSamples = jQuery.parseJSON(samples);
+        jsonSamples.forEach(function (jsonSample) {
+>>>>>>> release/half-sprint-2
             if (filenameSelectedSample == jsonSample.filename) {
                 editor.getSession().setValue(jsonSample.content);
             }
@@ -44,7 +65,11 @@ function updateSamples() {
         type: "get"
     });
 
+<<<<<<< HEAD
     request.done(function (response, textStatus, jqXHR){
+=======
+    request.done(function (response, textStatus, jqXHR) {
+>>>>>>> release/half-sprint-2
         // Updating the model
         samples = response;
 
@@ -53,7 +78,11 @@ function updateSamples() {
         var jsonSamples = jQuery.parseJSON(response);
 
         // Updating the drilldown
+<<<<<<< HEAD
         jsonSamples.forEach(function(jsonSample) {
+=======
+        jsonSamples.forEach(function (jsonSample) {
+>>>>>>> release/half-sprint-2
             var option = document.createElement("option");
             option.text = jsonSample.name;
             option.value = jsonSample.filename;
@@ -61,30 +90,52 @@ function updateSamples() {
         });
     });
 
+<<<<<<< HEAD
     request.fail(function (jqXHR, textStatus, errorThrown){
         // Log the error to the console
         console.log(
+=======
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        // Log the error to the console
+        console.error(
+>>>>>>> release/half-sprint-2
             "The following error occurred: "+
             textStatus, errorThrown
         );
     });
 }
 
+<<<<<<< HEAD
+=======
+function defineAceKeywords(){
+
+}
+
+>>>>>>> release/half-sprint-2
 
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
+<<<<<<< HEAD
     var outputConsole = document.getElementById('console');
+=======
+    var console = document.getElementById('console');
+>>>>>>> release/half-sprint-2
 
     // Fire the HTTP POST request
     var request = $.ajax({
         url: "/compile",
         type: "post",
+<<<<<<< HEAD
         data: { body: code }
+=======
+        data: {body: code}
+>>>>>>> release/half-sprint-2
     });
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
+<<<<<<< HEAD
         console.log("Request done !");
 
         var compilationEvents = response.errors;
@@ -98,6 +149,13 @@ function compile() {
 =======
             console.innerHTML += "<p class=\"compilationErr\">" + "Error during compilation : " + compilationEvent + "</p>";
 >>>>>>> 5723e39886683fe07d4dba5c5d22beaf13d05bfc
+=======
+        var compilationEvents = response.errors;
+        var runtimeEvents = response.events;
+
+        compilationEvents.forEach(function(compilationEvent) {
+            console.innerHTML += "<p class=\"compilationErr\">" + "Error during compilation : " + compilationEvent + "</p>";
+>>>>>>> release/half-sprint-2
         });
 
         runtimeEvents.forEach(function(runtimeEvent) {
@@ -105,6 +163,7 @@ function compile() {
             if(runtimeEvent.kind == "stderr") {
                 className = "stdErr"
             }
+<<<<<<< HEAD
 <<<<<<< HEAD
             else {
                 // ????
@@ -120,6 +179,17 @@ function compile() {
     request.fail(function (jqXHR, textStatus, errorThrown){
         // Log the error to the console
         console.log(
+=======
+            console.innerHTML += "<p class="+className+">" + runtimeEvent.message + "</p>";
+        });
+    });
+
+
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        // Log the error to the console
+        console.error(
+>>>>>>> release/half-sprint-2
             "The following error occurred: "+
             textStatus, errorThrown
         );
@@ -172,5 +242,12 @@ function sendReport(userEmail, comment) {
             "The following error occurred: "+
             textStatus, errorThrown
         );
+<<<<<<< HEAD
     });
 }
+=======
+        console.innerHTML="<p class='error'>Server Error, please try again</p>";
+
+    });
+}
+>>>>>>> release/half-sprint-2

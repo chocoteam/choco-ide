@@ -1,22 +1,28 @@
 // Global variable for Choco samples
 var samples;
 
-window.onload = function() {
+window.onload = function () {
     // Fullfill drilldown list with Choco samples
     updateSamples();
 
     // Initializing Ace editor
+    ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/java");
+    editor.getSession().setMode("ace/mode/choco");
     editor.$blockScrolling = Infinity;
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: false
+    });
 
     // Event handler when selected value has changed
-    $('#samples').change(function() {
+    $('#samples').change(function () {
+
         var filenameSelectedSample = $('#samples option:selected').val();
 
         var jsonSamples = jQuery.parseJSON(samples);
-        jsonSamples.forEach(function(jsonSample) {
+        jsonSamples.forEach(function (jsonSample) {
             if (filenameSelectedSample == jsonSample.filename) {
                 editor.getSession().setValue(jsonSample.content);
             }
@@ -33,6 +39,8 @@ window.onload = function() {
         $('#reportForm')[0].reset(); // clear the report form
         return false; // avoiding event to be processed
     });
+
+    settingDragNDrop();
 }
 
 function updateSamples() {
@@ -44,7 +52,7 @@ function updateSamples() {
         type: "get"
     });
 
-    request.done(function (response, textStatus, jqXHR){
+    request.done(function (response, textStatus, jqXHR) {
         // Updating the model
         samples = response;
 
@@ -53,7 +61,7 @@ function updateSamples() {
         var jsonSamples = jQuery.parseJSON(response);
 
         // Updating the drilldown
-        jsonSamples.forEach(function(jsonSample) {
+        jsonSamples.forEach(function (jsonSample) {
             var option = document.createElement("option");
             option.text = jsonSample.name;
             option.value = jsonSample.filename;
@@ -61,7 +69,7 @@ function updateSamples() {
         });
     });
 
-    request.fail(function (jqXHR, textStatus, errorThrown){
+    request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
         console.log(
             "The following error occurred: "+
@@ -70,17 +78,22 @@ function updateSamples() {
     });
 }
 
+function defineAceKeywords(){
+
+}
+
 
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
-    var outputConsole = document.getElementById('console');
+
+    var consoleCode = document.getElementById('console');
 
     // Fire the HTTP POST request
     var request = $.ajax({
         url: "/compile",
         type: "post",
-        data: { body: code }
+        data: {body: code}
     });
 
     // Callback handler that will be called on success - HTTP 200 OK
@@ -90,10 +103,11 @@ function compile() {
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
-        outputConsole.innerHTML = "";
+
+        consoleCode.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
-            outputConsole.innerHTML += "<p style=\" color:red; background-color: black\">" + "Error during compilation : " + compilationEvent + "</p>";
+            consoleCode.innerHTML += "<p class=\"compilationErr\"><pre>" + "Error during compilation : " + compilationEvent + "</pre></p>";
 
         });
 
@@ -102,15 +116,15 @@ function compile() {
             if(runtimeEvent.kind == "stderr") {
                 className = "stdErr"
             }
-            else {
-                // ????
-            }
-            outputConsole.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.message + "</p>";
+
+            consoleCode.innerHTML += "<p class="+className+"><pre>" + runtimeEvent.message + "</pre></p>";
+
         });
     });
 
+
     // Callback handler that will be called on failure
-    request.fail(function (jqXHR, textStatus, errorThrown){
+    request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
         console.log(
             "The following error occurred: "+
@@ -166,4 +180,67 @@ function sendReport(userEmail, comment) {
             textStatus, errorThrown
         );
     });
+}
+
+
+function settingDragNDrop(){
+
+
+    window.ondragover = function(e){
+        e.preventDefault();
+        document.getElementById("header").style.filter="blur(5px)";
+        document.getElementById("footer").style.filter="blur(5px)";
+        document.getElementById("not-editor").style.filter="blur(5px)";
+        document.getElementById("console").style.backgroundColor="lightgrey";
+        document.getElementById("console").style.filter="blur(5px)";
+    };
+
+    var unblur = function () {
+        document.getElementById("header").style.filter="";
+        document.getElementById("footer").style.filter="";
+        document.getElementById("not-editor").style.filter="";
+        document.getElementById("console").style.filter="";
+        document.getElementById("console").style.backgroundColor="white";
+    };
+
+    window.ondragend = function(e){
+        unblur();
+    };
+
+    window.ondragleave = function(e){
+        e.preventDefault();
+        unblur();
+    };
+
+    document.body.ondrop = function(e){
+        e.preventDefault();
+        console.log("wesh");
+        unblur();
+    };
+
+    var dropZone = document.getElementById("editor");
+
+    dropZone.ondragover = function(e){
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.dropEffect = 'copy';
+        e.preventDefault();
+    };
+
+    dropZone.ondrop = function(e){
+        console.log("okok");
+        e.preventDefault();
+        var data = e.dataTransfer;
+        if ('files' in data && data.files[0].type.indexOf("text")!=-1){
+            var reader = new FileReader();
+            reader.readAsText(e.dataTransfer.files[0]);
+
+            reader.onloadend=function() {
+                if (reader.readyState==reader.DONE) {
+                    ace.edit("editor").getSession().setValue(reader.result);
+                }
+            };
+        }else{
+            console.log("No valid element dropped");
+        }
+    };
 }

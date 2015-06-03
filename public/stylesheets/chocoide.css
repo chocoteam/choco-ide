@@ -49,6 +49,16 @@ header a:hover {
     border: 1px solid black;
 }
 
+
+.error {
+    color: red;
+    background-color: black;
+}
+
+.success {
+    color: blue;
+}
+
 .compilationErr {
     background-color: red;
     color: white;
