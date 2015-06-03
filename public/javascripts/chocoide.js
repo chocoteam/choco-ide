@@ -86,7 +86,7 @@ function defineAceKeywords(){
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
-    var console = document.getElementById('console');
+    var consoleCode = document.getElementById('console');
 
     // Fire the HTTP POST request
     var request = $.ajax({
@@ -100,10 +100,10 @@ function compile() {
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
-        console.innerHTML = "";
+        consoleCode.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
-            console.innerHTML += "<p class=\"compilationErr\">" + "Error during compilation : " + compilationEvent + "</p>";
+            consoleCode.innerHTML += "<p class=\"compilationErr\"><pre>" + "Error during compilation : " + compilationEvent + "</pre></p>";
         });
 
         runtimeEvents.forEach(function(runtimeEvent) {
@@ -111,7 +111,7 @@ function compile() {
             if(runtimeEvent.kind == "stderr") {
                 className = "stdErr"
             }
-            console.innerHTML += "<p class="+className+">" + runtimeEvent.message + "</p>";
+            consoleCode.innerHTML += "<p class="+className+"><pre>" + runtimeEvent.message + "</pre></p>";
         });
     });
 
@@ -172,8 +172,6 @@ function sendReport(userEmail, comment) {
             "The following error occurred: "+
             textStatus, errorThrown
         );
-        console.innerHTML="<p class='error'>Server Error, please try again</p>";
-
     });
 }
 

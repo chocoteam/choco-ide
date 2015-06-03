@@ -1,8 +1,6 @@
 package compilation;
 
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,52 +8,93 @@ import java.util.List;
  * Created by yann on 16/05/15.
  */
 public class StringCompilerAndRunner {
-    private final ClassLoader cl;
 
-    public StringCompilerAndRunner(ClassLoader cl) {
-        this.cl = cl;
-    }
+    private static final String MAIN_FILE = "tmp/src/Main.java";
+    private static final String CALL_JAVA_MAIN = "java -cp tmp/bin/:lib/* Main";
+    private static final String CALL_JAVAC_MAIN = "javac -d tmp/bin/ -cp lib/* tmp/src/Main.java";
+    private CompilationAndRunResult compilationAndRunResult;
 
-    public CompilationAndRunResult compileAndRun(String code) throws IllegalAccessException, InstantiationException {
+    public CompilationAndRunResult compileAndRun(String code) throws IOException {
+        System.out.println("Debut compileAndRun");
+
+        compilationAndRunResult = new CompilationAndRunResult();
 
         List<RunEvent> runEvents = new ArrayList<RunEvent>();
-        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
+        compileCode(code);
 
-        try {
-            ChocoProject instance = compileCode(code, collector);
-
+        if(canRunCode()) {
             EventsRecorder eventsRecorder = new EventsRecorder();
-            OutputRedirector redirector = new OutputRedirector(eventsRecorder);
-            runCode(instance);
-            redirector.restore();
-
-            runEvents.addAll(redirector.getEvents());
-
-        } catch (ClassNotFoundException e) {
-            System.err.println("Erreur à la compilation !" + e.getMessage());
-        } catch (FileNotFoundException e) {
-            System.err.println("Erreur de la création des streams ! " + e.getMessage());
+            EventsRecorder recorder = eventsRecorder;
+            try {
+                runCode();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            runEvents.addAll(recorder.getEvents());
         }
 
-        return new CompilationAndRunResult(collector, runEvents);
+        return compilationAndRunResult;
     }
 
-    private ChocoProject compileCode(String code, DiagnosticCollector<JavaFileObject> collector) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        CachedCompiler cc = new CachedCompiler();
-        Class clazz = cc.loadFromJava("compilation.ChocoProjectImpl", code, cl, collector);
-        return (ChocoProject) clazz.newInstance();
+    private boolean canRunCode() {
+        return this.compilationAndRunResult.getErrors().isEmpty();
     }
 
-    private void runCode(ChocoProject instance) {
-        try {
-            instance.run();
-        } catch (Exception e) {
-            System.err.println("Erreur à l'execution !");
-            throw e;
+    private void compileCode(String code) throws IOException {
+        System.out.println("Compilation en cours");
+
+        createFilesBeforeCompile(code);
+        ProcessRunner processRunner = new ProcessRunner(CALL_JAVAC_MAIN);
+        processRunner.blockingRun();
+
+        System.out.println("stdout :");
+        BufferedReader stdInput = processRunner.getStdInput();
+        String s = stringOfReader(stdInput);
+        System.out.println("\""+s+"\"");
+
+        System.out.println("stderr :");
+        BufferedReader stdError = processRunner.getStdError();
+        String s1 = stringOfReader(stdError);
+        System.out.println("\""+s1+"\"");
+        if(!"".equals(s1))
+            this.compilationAndRunResult.addError(s1);
+
+        System.out.println("Fin de la compilation");
+    }
+
+    private String stringOfReader(BufferedReader reader) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        while ((line = reader.readLine()) != null){
+            sb.append(line+"\n");
         }
+
+        return sb.toString();
     }
 
-    private void debugDiagnostics(DiagnosticCollector<JavaFileObject> collector) {
-        collector.getDiagnostics().forEach(System.out::println);
+    private void createFilesBeforeCompile(String code) throws FileNotFoundException, UnsupportedEncodingException {
+        PrintWriter writer = new PrintWriter(MAIN_FILE, "UTF-8");
+        writer.println(code);
+        writer.close();
+    }
+
+    private void runCode() throws IOException {
+        ProcessRunner processRunner = new ProcessRunner(CALL_JAVA_MAIN);
+        processRunner.blockingRun();
+
+        System.out.println("stdout :");
+        BufferedReader stdInput = processRunner.getStdInput();
+        String s = stringOfReader(stdInput);
+        System.out.println("\""+s+"\"");
+        if(!"".equals(s))
+            compilationAndRunResult.addEvent(new RunEvent(s, RunEvent.Kind.OUT.toString(), 0));
+
+        System.out.println("stderr :");
+        BufferedReader stdError = processRunner.getStdError();
+        String s1 = stringOfReader(stdError);
+        System.out.println("\""+s1+"\"");
+        if(!"".equals(s1))
+            compilationAndRunResult.addEvent(new RunEvent(s1, RunEvent.Kind.ERR.toString(), 0));
     }
 }
