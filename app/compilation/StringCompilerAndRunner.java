@@ -3,19 +3,32 @@ package compilation;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by yann on 16/05/15.
  */
 public class StringCompilerAndRunner {
 
+    // Commandes utilisées à la compilation
     private static final String MAIN_FILE = "ctmp/src/Main.java";
     private static final String CALL_JAVA_MAIN = "java -cp ctmp/bin/:lib/* Main";
     private static final String CALL_JAVAC_MAIN = "javac -d ctmp/bin/ -cp lib/* ctmp/src/Main.java";
+
+    // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
+    private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
+
     private CompilationAndRunResult compilationAndRunResult;
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
+
+        Pattern pattern = Pattern.compile(PATTERN_MAIN);
+        Matcher matcher = pattern.matcher(code);
+        while(matcher.find()){
+            System.out.println("main class : \"" + matcher.group(1) + "\"");
+        }
 
         compilationAndRunResult = new CompilationAndRunResult();
 
