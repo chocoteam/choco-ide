@@ -39,13 +39,13 @@ header a:hover {
 
 #editor {
     position: relative;
-    height: 300px;
+    height: 400px;
 }
 
 #console {
     overflow-x: hidden;
     overflow-y: scroll;
-    height: 300px;
+    height: 400px;
     border: 1px solid black;
 }
 
@@ -70,6 +70,10 @@ header a:hover {
 
 .stdErr {
     color: red;
+}
+
+#chocologo{
+    height: 90px;
 }
 
 /* Rotating the 'Loading' button */
