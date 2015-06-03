@@ -71,7 +71,7 @@ function updateSamples() {
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
-        console.error(
+        console.log(
             "The following error occurred: "+
             textStatus, errorThrown
         );
@@ -86,6 +86,7 @@ function defineAceKeywords(){
 function compile() {
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
+
     var consoleCode = document.getElementById('console');
 
     // Fire the HTTP POST request
@@ -97,13 +98,17 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
+        console.log("Request done !");
+
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
+
 
         consoleCode.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
             consoleCode.innerHTML += "<p class=\"compilationErr\"><pre>" + "Error during compilation : " + compilationEvent + "</pre></p>";
+
         });
 
         runtimeEvents.forEach(function(runtimeEvent) {
@@ -111,7 +116,9 @@ function compile() {
             if(runtimeEvent.kind == "stderr") {
                 className = "stdErr"
             }
+
             consoleCode.innerHTML += "<p class="+className+"><pre>" + runtimeEvent.message + "</pre></p>";
+
         });
     });
 
@@ -119,7 +126,7 @@ function compile() {
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
-        console.error(
+        console.log(
             "The following error occurred: "+
             textStatus, errorThrown
         );
@@ -174,6 +181,7 @@ function sendReport(userEmail, comment) {
         );
     });
 }
+
 
 function settingDragNDrop(){
 
