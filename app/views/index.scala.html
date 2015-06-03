@@ -12,15 +12,70 @@
             </div>
         </div>
     </header>
-
+    
     <section class="row">
         <div id="editor" class="col-xs-12 col-md-6"></div>
         <div id="console" class="col-xs-12 col-md-6"></div>
         <select id="samples"></select>
-        <button type="button" class="btn btn-default btn-lg col-xs-offset-5" onclick="compile()">
+        <button type="button" class="btn btn-default btn-lg" onclick="compile()">
             <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
             Run
         </button>
+        <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#reportModal">
+            <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+            Report
+        </button>
+            <!-- Report Modal -->
+        <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Report an issue</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reportForm" class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="email">Email</label>
+                                <div class="col-md-4">
+                                    <input id="emailReport" name="email" type="email" placeholder="Your email address" class="form-control input-md" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="comment">Comment</label>
+                                <div class="col-md-4">
+                                    <textarea id="commentReport" rows="5" name="comment" type="text" placeholder="Your comment" class="form-control input-md" required></textarea>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- Alert when report submitted successfully -->
+        <div class="modal fade" id="alertReportSuccess" tabindex="-1" role="dialog" aria-labelledby="alertReportSuccessLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="alert alert-success" role="alert">
+                    <span>
+                        <p>The report has been sent successfully !</p>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+            <!-- Alert when report not submitted due to errors -->
+        <div class="modal fade" id="alertReportFailure" tabindex="-1" role="dialog" aria-labelledby="alertReportFailureLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="alert alert-danger" role="alert">
+                    <span>
+                        <p>Error occurred when trying to submit the report, please try again later.</p>
+                    </span>
+                </div>
+            </div>
+        </div>
+
     </section>
 
     <footer class="row text-center">

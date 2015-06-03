@@ -93,8 +93,11 @@ function compile() {
         outputConsole.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
+<<<<<<< HEAD
             outputConsole.innerHTML += "<p style=\" color:red; background-color: black\">" + "Error during compilation : " + compilationEvent + "</p>";
-
+=======
+            console.innerHTML += "<p class=\"compilationErr\">" + "Error during compilation : " + compilationEvent + "</p>";
+>>>>>>> 5723e39886683fe07d4dba5c5d22beaf13d05bfc
         });
 
         runtimeEvents.forEach(function(runtimeEvent) {
@@ -102,10 +105,14 @@ function compile() {
             if(runtimeEvent.kind == "stderr") {
                 className = "stdErr"
             }
+<<<<<<< HEAD
             else {
                 // ????
             }
             outputConsole.innerHTML += "<p style=\"color:"+textColor+";\">" + runtimeEvent.message + "</p>";
+=======
+            console.innerHTML += "<p class="+className+">" + runtimeEvent.message + "</p>";
+>>>>>>> 5723e39886683fe07d4dba5c5d22beaf13d05bfc
         });
     });
 

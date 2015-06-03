@@ -42,7 +42,7 @@ public enum CompilerUtils {
     ;
     private static final Logger LOGGER = LoggerFactory.getLogger(CompilerUtils.class);
     public static final boolean DEBUGGING = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
-    public static final CachedCompiler CACHED_COMPILER = new CachedCompiler(null, null);
+    public static final CachedCompiler CACHED_COMPILER = new CachedCompiler();
     private static final Method DEFINE_CLASS_METHOD;
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final String JAVA_CLASS_PATH = "java.class.path";
