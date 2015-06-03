@@ -49,9 +49,8 @@ public class StringCompilerAndRunner {
         BufferedReader stdError = processRunner.getStdError();
         String s1 = stringOfReader(stdError);
         System.out.println("\""+s1+"\"");
-        if(!"".equals(s1)){
+        if(!"".equals(s1))
             this.compilationAndRunResult.addError(s1);
-        }
 
         System.out.println("Fin de la compilation");
     }
@@ -81,10 +80,14 @@ public class StringCompilerAndRunner {
         BufferedReader stdInput = processRunner.getStdInput();
         String s = stringOfReader(stdInput);
         System.out.println("\""+s+"\"");
+        if(!"".equals(s))
+            compilationAndRunResult.addEvent(new RunEvent(s, RunEvent.Kind.OUT.toString(), 0));
 
         System.out.println("stderr :");
         BufferedReader stdError = processRunner.getStdError();
         String s1 = stringOfReader(stdError);
         System.out.println("\""+s1+"\"");
+        if(!"".equals(s1))
+            compilationAndRunResult.addEvent(new RunEvent(s1, RunEvent.Kind.ERR.toString(), 0));
     }
 }

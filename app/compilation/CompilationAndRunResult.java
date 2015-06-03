@@ -33,4 +33,8 @@ public class CompilationAndRunResult {
     public void addError(String error) {
         this.errors.add(error);
     }
+
+    public void addEvent(RunEvent runEvent) {
+        this.events.add(runEvent);
+    }
 }
