@@ -2,6 +2,7 @@ package compilation;
 
 import play.Play;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -20,24 +21,27 @@ public class StringCompilerAndRunner {
 
     // Commandes utilisées à la compilation
     /**
+     * Pattern du chemin du fichier créé
      * $1 : tmp folder
      * $2 : classname
      */
     private static final String MAIN_FILE = "%s/src/%s.java";
 
     /**
+     * Pattern de compilation
      * $1 : tmp folder
      * $2 : libpath
      * $3 : classname
      */
-    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/:%2$s -d %1$s/bin/ %1$s/src/%3$s.java";
+    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java";
 
     /**
+     * Pattern d'exécution
      * $1 : tmp folder
      * $2 : libpath
      * $3 : classname
      */
-    private static final String CALL_JAVA_MAIN = "java -cp %1$s/bin/:%2$s %3$s";
+    private static final String CALL_JAVA_MAIN = "java -cp %1$s/bin/"+ File.pathSeparator + "%2$s %3$s";
 
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
