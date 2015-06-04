@@ -1,6 +1,9 @@
 package compilation;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,22 +27,19 @@ public class StringCompilerAndRunner {
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
 
-        Pattern pattern = Pattern.compile(PATTERN_MAIN);
-        Matcher matcher = pattern.matcher(code);
-        while(matcher.find()){
-            System.out.println("main class : \"" + matcher.group(1) + "\"");
-        }
+        findMainClass(code);
 
         compilationAndRunResult = new CompilationAndRunResult();
 
+        createFilesBeforeCompile(code);
+        compileCode(code, compilationAndRunResult);
         List<RunEvent> runEvents = new ArrayList<RunEvent>();
-        compileCode(code);
 
         if(canRunCode()) {
             EventsRecorder eventsRecorder = new EventsRecorder();
             EventsRecorder recorder = eventsRecorder;
             try {
-                runCode();
+                runCode(compilationAndRunResult);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -49,41 +49,24 @@ public class StringCompilerAndRunner {
         return compilationAndRunResult;
     }
 
+    private void findMainClass(String code) {
+        Pattern pattern = Pattern.compile(PATTERN_MAIN);
+        Matcher matcher = pattern.matcher(code);
+        while(matcher.find()){
+            System.out.println("main class : \"" + matcher.group(1) + "\"");
+        }
+    }
+
     private boolean canRunCode() {
         return this.compilationAndRunResult.getErrors().isEmpty();
     }
 
-    private void compileCode(String code) throws IOException {
-        System.out.println("Compilation en cours");
-
-        createFilesBeforeCompile(code);
-        ProcessRunner processRunner = new ProcessRunner(CALL_JAVAC_MAIN);
-        processRunner.blockingRun();
-
-        System.out.println("stdout :");
-        BufferedReader stdInput = processRunner.getStdInput();
-        String s = stringOfReader(stdInput);
-        System.out.println("\""+s+"\"");
-
-        System.out.println("stderr :");
-        BufferedReader stdError = processRunner.getStdError();
-        String s1 = stringOfReader(stdError);
-        System.out.println("\""+s1+"\"");
-        if(!"".equals(s1))
-            this.compilationAndRunResult.addError(s1);
-
-        System.out.println("Fin de la compilation");
+    private void compileCode(String code, CompilationAndRunResult compilationAndRunResult) throws IOException {
+        new CompileStrategy(CALL_JAVAC_MAIN, compilationAndRunResult).handleOutputs();
     }
 
-    private String stringOfReader(BufferedReader reader) throws IOException {
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        while ((line = reader.readLine()) != null){
-            sb.append(line+"\n");
-        }
-
-        return sb.toString();
+    private void runCode(CompilationAndRunResult compilationAndRunResult) throws IOException {
+        new RunStrategy(CALL_JAVA_MAIN, compilationAndRunResult).handleOutputs();
     }
 
     private void createFilesBeforeCompile(String code) throws FileNotFoundException, UnsupportedEncodingException {
@@ -92,22 +75,5 @@ public class StringCompilerAndRunner {
         writer.close();
     }
 
-    private void runCode() throws IOException {
-        ProcessRunner processRunner = new ProcessRunner(CALL_JAVA_MAIN);
-        processRunner.blockingRun();
 
-        System.out.println("stdout :");
-        BufferedReader stdInput = processRunner.getStdInput();
-        String s = stringOfReader(stdInput);
-        System.out.println("\""+s+"\"");
-        if(!"".equals(s))
-            compilationAndRunResult.addEvent(new RunEvent(s, RunEvent.Kind.OUT.toString(), 0));
-
-        System.out.println("stderr :");
-        BufferedReader stdError = processRunner.getStdError();
-        String s1 = stringOfReader(stdError);
-        System.out.println("\""+s1+"\"");
-        if(!"".equals(s1))
-            compilationAndRunResult.addEvent(new RunEvent(s1, RunEvent.Kind.ERR.toString(), 0));
-    }
 }
