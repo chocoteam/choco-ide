@@ -93,11 +93,13 @@ public class StringCompilerAndRunner {
 
     private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
         String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
+        System.out.println(commande);
         new CompileStrategy(commande, compilationAndRunResult).handleOutputs();
     }
 
     private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
         String commande = String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className);
+        System.out.println(commande);
         new RunStrategy(commande, compilationAndRunResult).handleOutputs();
     }
 
