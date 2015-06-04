@@ -50,21 +50,18 @@ public class StringCompilerAndRunner {
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
 
+        String libPath = Play.application().configuration().getString("compilation.libPath");
+        String tmpPath = Play.application().configuration().getString("compilation.tmpPath");
+        Files.createDirectories(Paths.get(tmpPath));
+        Path tempDirectory = Files.createTempDirectory(Paths.get(tmpPath), "choco-");
 
         String className = findMainClass(code).orElse("Main");
-
-        compilationAndRunResult = new CompilationAndRunResult();
-
-        String libpath = Play.application().configuration().getString("compilation.libpath");
-        String folderTmpCompile = Play.application().configuration().getString("compilation.tmpPath");
-
-        Path tempDirectory = Files.createTempDirectory(Paths.get(folderTmpCompile), "choco-");
-
         createFilesBeforeCompile(code, className, tempDirectory);
-        compileCode(compilationAndRunResult, className, libpath, tempDirectory);
+        compilationAndRunResult = new CompilationAndRunResult();
+        compileCode(compilationAndRunResult, className, libPath, tempDirectory);
 
         if(canRunCode()) {
-            runCode(compilationAndRunResult, className, libpath, tempDirectory);
+            runCode(compilationAndRunResult, className, libPath, tempDirectory);
         }
 
         deleteTmpFolder(tempDirectory);
