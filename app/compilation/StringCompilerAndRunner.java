@@ -1,9 +1,6 @@
 package compilation;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +13,10 @@ import java.util.regex.Pattern;
 public class StringCompilerAndRunner {
 
     // Commandes utilisées à la compilation
-    private static final String MAIN_FILE = "ctmp/src/%s.java";
-    private static final String CALL_JAVA_MAIN = "java -cp ctmp/bin/:lib/* %s";
-    private static final String CALL_JAVAC_MAIN = "javac -d ctmp/bin/ -cp lib/* ctmp/src/%s.java";
+    private static final String ROOT_COMPILE = "ctmp/";
+    private static final String MAIN_FILE = ROOT_COMPILE+"src/%s.java";
+    private static final String CALL_JAVA_MAIN = "java -cp " + ROOT_COMPILE +"bin/"+ File.pathSeparator +"lib/* %s";
+    private static final String CALL_JAVAC_MAIN = "javac -d " + ROOT_COMPILE + "bin/ -cp lib/* " + ROOT_COMPILE + "src/%s.java";
 
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
