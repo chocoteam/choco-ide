@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
@@ -13,39 +14,36 @@ import java.util.HashMap;
 public abstract class ProcessStrategy {
 
     protected final CompilationAndRunResult compilationAndRunResult;
-    protected final String sOut;
-    protected final String sErr;
-    private final HashMap<RunEvent.Kind, BufferedReader> mapReaders;
+    protected HashMap<RunEvent.Kind, String> mapRes;
 
     public ProcessStrategy(String command, CompilationAndRunResult compilationAndRunResult) throws IOException {
         this.compilationAndRunResult = compilationAndRunResult;
         Process p = Runtime.getRuntime().exec(command);
-        BufferedReader stdInput = new BufferedReader((new InputStreamReader(p.getInputStream())));
-        BufferedReader stdError = new BufferedReader((new InputStreamReader(p.getErrorStream())));
-        mapReaders = new HashMap<>();
-        mapReaders.put(RunEvent.Kind.OUT, stdInput);
-        mapReaders.put(RunEvent.Kind.ERR, stdError);
+        mapRes = new HashMap<>();
 
-        sOut = getAndOutput(mapReaders, RunEvent.Kind.OUT);
-        sErr = getAndOutput(mapReaders, RunEvent.Kind.ERR);
+        readOutputAndStoreString(p.getInputStream(), RunEvent.Kind.OUT);
+        readOutputAndStoreString(p.getErrorStream(), RunEvent.Kind.ERR);
+    }
+
+    private void readOutputAndStoreString(InputStream stream, RunEvent.Kind kind) throws IOException {
+        BufferedReader reader = new BufferedReader((new InputStreamReader(stream)));
+        mapRes.put(kind, getAndOutput(reader, kind));
     }
 
     @NotNull
-    private String getAndOutput(HashMap<RunEvent.Kind, BufferedReader> readerMap, RunEvent.Kind kind) throws IOException {
+    private String getAndOutput(BufferedReader reader, RunEvent.Kind kind) throws IOException {
         System.out.println(kind + ":");
-        String res = stringOfReader(readerMap.get(kind));
+        String res = stringOfReader(reader);
         System.out.println("\""+res+"\"");
         return res;
     }
 
     private String stringOfReader(BufferedReader reader) throws IOException {
         StringBuilder sb = new StringBuilder();
-
         String line;
         while ((line = reader.readLine()) != null){
             sb.append(line+"\n");
         }
-
         return sb.toString();
     }
 

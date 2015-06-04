@@ -11,11 +11,14 @@ public class RunStrategy extends ProcessStrategy {
     }
 
     public void handleOutputs() {
-        if(!"".equals(sOut)) {
-            compilationAndRunResult.addEvent(new RunEvent(sOut, RunEvent.Kind.OUT.toString(), 0));
+        String messOut = mapRes.get(RunEvent.Kind.OUT);
+        String messErr = mapRes.get(RunEvent.Kind.ERR);
+
+        if(!"".equals(messOut)) {
+            compilationAndRunResult.addEvent(new RunEvent(messOut, RunEvent.Kind.OUT.toString(), 0));
         }
 
-        if(!"".equals(sErr))
-            compilationAndRunResult.addEvent(new RunEvent(sErr, RunEvent.Kind.ERR.toString(), 0));
+        if(!"".equals(messErr))
+            compilationAndRunResult.addEvent(new RunEvent(messErr, RunEvent.Kind.ERR.toString(), 0));
     }
 }

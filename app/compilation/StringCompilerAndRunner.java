@@ -35,15 +35,14 @@ public class StringCompilerAndRunner {
         List<RunEvent> runEvents = new ArrayList<RunEvent>();
 
         if(canRunCode()) {
-            EventsRecorder eventsRecorder = new EventsRecorder();
-            EventsRecorder recorder = eventsRecorder;
             try {
                 runCode(compilationAndRunResult, className);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            runEvents.addAll(recorder.getEvents());
         }
+
+        System.out.println("Fin compileAndRun");
 
         return compilationAndRunResult;
     }

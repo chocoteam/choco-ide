@@ -11,7 +11,9 @@ public class CompileStrategy extends ProcessStrategy {
     }
 
     public void handleOutputs() {
-        if (!"".equals(sErr))
-            this.compilationAndRunResult.addError(sErr);
+        String messErr = this.mapRes.get(RunEvent.Kind.ERR);
+
+        if (!"".equals(messErr))
+            this.compilationAndRunResult.addError(messErr);
     }
 }
