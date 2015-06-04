@@ -1,6 +1,12 @@
 package compilation;
 
-import java.io.*;
+import play.Play;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,30 +19,51 @@ import java.util.regex.Pattern;
 public class StringCompilerAndRunner {
 
     // Commandes utilisées à la compilation
-    private static final String ROOT_COMPILE = "ctmp/";
-    private static final String MAIN_FILE = ROOT_COMPILE+"src/%s.java";
-    private static final String CALL_JAVA_MAIN = "java -cp " + ROOT_COMPILE +"bin/"+ File.pathSeparator +"lib/* %s";
-    private static final String CALL_JAVAC_MAIN = "javac -d " + ROOT_COMPILE + "bin/ -cp lib/* " + ROOT_COMPILE + "src/%s.java";
+    /**
+     * $1 : tmp folder
+     * $2 : classname
+     */
+    private static final String MAIN_FILE = "%s/src/%s.java";
+
+    /**
+     * $1 : tmp folder
+     * $2 : libpath
+     * $3 : classname
+     */
+    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/:%2$s -d %1$s/bin/ %1$s/src/%3$s.java";
+
+    /**
+     * $1 : tmp folder
+     * $2 : libpath
+     * $3 : classname
+     */
+    private static final String CALL_JAVA_MAIN = "java -cp %1$s/bin/:%2$s %3$s";
 
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
 
     private CompilationAndRunResult compilationAndRunResult;
+    private Path tempDirectory;
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
+
 
         String className = findMainClass(code).orElse("Main");
 
         compilationAndRunResult = new CompilationAndRunResult();
 
+        String libpath = Play.application().configuration().getString("compilation.libpath");
+        String folderTmpCompile = Play.application().configuration().getString("compilation.tmpPath");
+        tempDirectory = Files.createTempDirectory(Paths.get(folderTmpCompile), "");
+
         createFilesBeforeCompile(code, className);
-        compileCode(code, compilationAndRunResult, className);
+        compileCode(code, compilationAndRunResult, className, libpath);
         List<RunEvent> runEvents = new ArrayList<RunEvent>();
 
         if(canRunCode()) {
             try {
-                runCode(compilationAndRunResult, className);
+                runCode(compilationAndRunResult, className, libpath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -63,18 +90,20 @@ public class StringCompilerAndRunner {
         return this.compilationAndRunResult.getErrors().isEmpty();
     }
 
-    private void compileCode(String code, CompilationAndRunResult compilationAndRunResult, String className) throws IOException {
-        String commande = String.format(CALL_JAVAC_MAIN, className);
+    private void compileCode(String code, CompilationAndRunResult compilationAndRunResult, String className, String libpath) throws IOException {
+        String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
         new CompileStrategy(commande, compilationAndRunResult).handleOutputs();
     }
 
-    private void runCode(CompilationAndRunResult compilationAndRunResult, String className) throws IOException {
-        String commande = String.format(CALL_JAVA_MAIN, className);
+    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath) throws IOException {
+        String commande = String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className);
         new RunStrategy(commande, compilationAndRunResult).handleOutputs();
     }
 
-    private void createFilesBeforeCompile(String code, String className) throws FileNotFoundException, UnsupportedEncodingException {
-        PrintWriter writer = new PrintWriter(String.format(MAIN_FILE, className), "UTF-8");
+    private void createFilesBeforeCompile(String code, String className) throws IOException {
+        Files.createDirectories(tempDirectory.resolve("bin"));
+        Files.createDirectories(tempDirectory.resolve("src"));
+        PrintWriter writer = new PrintWriter(String.format(MAIN_FILE, tempDirectory.toString(), className), "UTF-8");
         writer.println(code);
         writer.close();
     }
