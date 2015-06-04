@@ -1,14 +1,13 @@
 package compilation;
 
+import datas.Utils.FileUtils;
 import play.Play;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -47,7 +46,6 @@ public class StringCompilerAndRunner {
     private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
 
     private CompilationAndRunResult compilationAndRunResult;
-    private Path tempDirectory;
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
@@ -59,23 +57,25 @@ public class StringCompilerAndRunner {
 
         String libpath = Play.application().configuration().getString("compilation.libpath");
         String folderTmpCompile = Play.application().configuration().getString("compilation.tmpPath");
-        tempDirectory = Files.createTempDirectory(Paths.get(folderTmpCompile), "");
 
-        createFilesBeforeCompile(code, className);
-        compileCode(code, compilationAndRunResult, className, libpath);
-        List<RunEvent> runEvents = new ArrayList<RunEvent>();
+        Path tempDirectory = Files.createTempDirectory(Paths.get(folderTmpCompile), "choco-");
+
+        createFilesBeforeCompile(code, className, tempDirectory);
+        compileCode(compilationAndRunResult, className, libpath, tempDirectory);
 
         if(canRunCode()) {
-            try {
-                runCode(compilationAndRunResult, className, libpath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            runCode(compilationAndRunResult, className, libpath, tempDirectory);
         }
+
+        deleteTmpFolder(tempDirectory);
 
         System.out.println("Fin compileAndRun");
 
         return compilationAndRunResult;
+    }
+
+    private void deleteTmpFolder(Path tempDirectory) {
+        FileUtils.recursiveDelete(tempDirectory);
     }
 
     private Optional<String> findMainClass(String code) {
@@ -94,22 +94,38 @@ public class StringCompilerAndRunner {
         return this.compilationAndRunResult.getErrors().isEmpty();
     }
 
-    private void compileCode(String code, CompilationAndRunResult compilationAndRunResult, String className, String libpath) throws IOException {
+    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
         String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
         new CompileStrategy(commande, compilationAndRunResult).handleOutputs();
     }
 
-    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath) throws IOException {
+    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
         String commande = String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className);
         new RunStrategy(commande, compilationAndRunResult).handleOutputs();
     }
 
-    private void createFilesBeforeCompile(String code, String className) throws IOException {
-        Files.createDirectories(tempDirectory.resolve("bin"));
-        Files.createDirectories(tempDirectory.resolve("src"));
+    private void createFilesBeforeCompile(String code, String className, Path tempDirectory) throws IOException {
+        List<String> folders = Arrays.asList(new String[]{"bin", "src"});
+        folders.forEach(f -> {
+            try {
+                createFolderInTmp(f, tempDirectory);
+            } catch (IOException e) {
+                System.err.println("erreur à la création de " + f + " : " + e.getMessage());
+            }
+        });
+        createJavaSourceFile(code, className, tempDirectory);
+    }
+
+    private void createJavaSourceFile(String code, String className, Path tempDirectory) throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writer = new PrintWriter(String.format(MAIN_FILE, tempDirectory.toString(), className), "UTF-8");
         writer.println(code);
         writer.close();
+    }
+
+    private Path createFolderInTmp(String folderName, Path tempDirectory) throws IOException {
+        Path path = tempDirectory.resolve(folderName);
+        Files.createDirectories(path);
+        return path;
     }
 
 
