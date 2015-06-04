@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/scala-getting-started -Dhttp.port=${PORT}
+web: target/universal/stage/bin/chocoide -Dhttp.port=${PORT}
