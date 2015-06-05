@@ -45,8 +45,6 @@ public class StringCompilerAndRunner {
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
 
-    private CompilationAndRunResult compilationAndRunResult;
-
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
 
@@ -57,10 +55,10 @@ public class StringCompilerAndRunner {
 
         String className = findMainClass(code).orElse("Main");
         createFilesBeforeCompile(code, className, tempDirectory);
-        compilationAndRunResult = new CompilationAndRunResult();
+        CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
         compileCode(compilationAndRunResult, className, libPath, tempDirectory);
 
-        if(canRunCode()) {
+        if(canRunCode(compilationAndRunResult)) {
             runCode(compilationAndRunResult, className, libPath, tempDirectory);
         }
 
@@ -87,8 +85,8 @@ public class StringCompilerAndRunner {
         return Optional.empty();
     }
 
-    private boolean canRunCode() {
-        return this.compilationAndRunResult.getErrors().isEmpty();
+    private boolean canRunCode(CompilationAndRunResult compilationAndRunResult) {
+        return compilationAndRunResult.getErrors().isEmpty();
     }
 
     private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
