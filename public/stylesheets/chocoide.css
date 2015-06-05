@@ -24,11 +24,11 @@ header a:visited{
 
 section {
     background-color: #ffffff;
-    padding-bottom: 3%;
+    padding-bottom: 2%;
 }
 
 section button {
-    margin: 4% 0px 4% 0px;
+    margin: 1% 0px 0% 0px;
 }
 
 header a:hover {
