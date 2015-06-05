@@ -214,7 +214,6 @@ function settingDragNDrop(){
 
     document.body.ondrop = function(e){
         e.preventDefault();
-        console.log("wesh");
         unblur();
     };
 
@@ -227,7 +226,6 @@ function settingDragNDrop(){
     };
 
     dropZone.ondrop = function(e){
-        console.log("okok");
         e.preventDefault();
         var data = e.dataTransfer;
         if ('files' in data && data.files[0].type.indexOf("text")!=-1){
