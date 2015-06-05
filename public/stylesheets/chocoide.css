@@ -22,6 +22,16 @@ header a:visited{
     text-decoration: none;
 }
 
+header a:hover {
+    background-color: #048ad6;
+    color: white;
+    text-decoration: none;
+}
+
+#chocologo{
+    height: 90px;
+}
+
 section {
     background-color: #ffffff;
     padding-bottom: 2%;
@@ -31,21 +41,15 @@ section button {
     margin: 1% 0px 0% 0px;
 }
 
-header a:hover {
-    background-color: #048ad6;
-    color: white;
-    text-decoration: none;
-}
-
 #editor {
     position: relative;
-    height: 400px;
+    height: 420px;
 }
 
 #console {
     overflow-x: hidden;
     overflow-y: scroll;
-    height: 400px;
+    height: 420px;
     border: 1px solid black;
 }
 
@@ -70,10 +74,6 @@ header a:hover {
 
 .stdErr {
     color: red;
-}
-
-#chocologo{
-    height: 90px;
 }
 
 /* Rotating the 'Loading' button */

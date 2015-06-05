@@ -6,7 +6,7 @@
         <div class="col-xs-offset-3">
             <img id="chocologo" src='@routes.Assets.at("images/ChocoLogo-160x135.png")'/>
             <div class="text-justify">
-                <h4>Try Choco online !</h4>
+                <h2>Try Choco online !</h2>
                 <a href="http://choco-solver.org/">http://choco-solver.org/</a>
             </div>
         </div>
@@ -20,14 +20,12 @@
                 <p class="col-xs-6">Choose a sample to run or drag a class of your own ! </p><select id="samples" class="col-xs-6"></select>
             </span>
 
-            <div class="row">
-                <button id="runButton" type="button" class="btn btn-success btn-lg col-xs-1 col-xs-offset-4 col-md-1 col-md-offset-4" onclick="compile()">
-                    <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-danger btn-lg col-xs-1 col-xs-offset-2 col-md-1 col-md-offset-2" data-toggle="modal" data-target="#reportModal">
-                    <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
-                </button>
-            </div>
+            <button id="runButton" type="button" class="btn btn-success btn-lg col-xs-1 col-xs-offset-4 col-md-1 col-md-offset-4" onclick="compile()">
+                <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-danger btn-lg col-xs-1 col-xs-offset-2 col-md-1 col-md-offset-2" data-toggle="modal" data-target="#reportModal">
+                <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+            </button>
         </div>
             <!-- Report Modal -->
         <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
