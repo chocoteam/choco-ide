@@ -8,7 +8,7 @@ package datas.report;
 public class Report {
     private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     /**
-     * The compilation error, can be null
+     * The datas.compilation error, can be null
      */
     private String compilationError;
 

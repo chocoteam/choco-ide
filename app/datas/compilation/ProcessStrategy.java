@@ -1,4 +1,4 @@
-package compilation;
+package datas.compilation;
 
 import org.jetbrains.annotations.NotNull;
 
