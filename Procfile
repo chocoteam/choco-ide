@@ -1,1 +1,2 @@
+web: set _JAVA_OPTIONS=-Xmx384m -Xss512k -Dfile.encoding=UTF-8
 web: target/universal/stage/bin/chocoide -Dhttp.port=${PORT} -DapplyEvolutions.default=true
