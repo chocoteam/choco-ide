@@ -115,7 +115,7 @@ function compile() {
         consoleCode.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
-            consoleCode.innerHTML += "<p class=\"compilationErr\"><pre>" + "Error during compilation : " + compilationEvent + "</pre></p>";
+            consoleCode.innerHTML += "<p class=\"compilationErr\"><pre>" + "Error during datas.compilation : " + compilationEvent + "</pre></p>";
 
         });
 

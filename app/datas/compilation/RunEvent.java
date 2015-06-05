@@ -1,4 +1,4 @@
-package compilation;
+package datas.compilation;
 
 /**
  * Created by yann on 26/05/15.

@@ -108,11 +108,13 @@ public class ReportManager {
     public Report createReportCompilation(String message,String sourceCode, String sdtOut, String compilationError, String userEmail) {
         Report report = new Report(sdtOut, sourceCode, userEmail);
         report.setCompilationError(compilationError);
+        report.setMessage(message);
         return report;
     }
 
     public Report createReportExecution(String message,String sourceCode, String sdtOut, String errOut, String userEmail) {
         Report report = new Report(sdtOut, sourceCode, userEmail);
+        report.setMessage(message);
         report.setExceptionStackTrace(errOut);
         return report;
     }

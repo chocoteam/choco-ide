@@ -2,8 +2,8 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import compilation.CompilationAndRunResult;
-import compilation.StringCompilerAndRunner;
+import datas.compilation.CompilationAndRunResult;
+import datas.compilation.StringCompilerAndRunner;
 import datas.keywords.KeywordsManager;
 import datas.report.Report;
 import datas.report.ReportManager;
@@ -25,9 +25,9 @@ public class Application extends Controller {
     }
 
     /**
-     * Call to compilation service
+     * Call to datas.compilation service
      *
-     * @return result compilation result
+     * @return result datas.compilation result
      */
     public static Result compile() throws IllegalAccessException, InstantiationException {
         try {
