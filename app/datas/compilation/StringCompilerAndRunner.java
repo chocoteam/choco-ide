@@ -1,4 +1,4 @@
-package compilation;
+package datas.compilation;
 
 import datas.Utils.FileUtils;
 import play.Play;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class StringCompilerAndRunner {
 
-    // Commandes utilisées à la compilation
+    // Commandes utilisées à la datas.compilation
     /**
      * Pattern du chemin du fichier créé
      * $1 : tmp folder
@@ -27,7 +27,7 @@ public class StringCompilerAndRunner {
     private static final String MAIN_FILE = "%s/src/%s.java";
 
     /**
-     * Pattern de compilation
+     * Pattern de datas.compilation
      * $1 : tmp folder
      * $2 : libpath
      * $3 : classname
@@ -48,8 +48,8 @@ public class StringCompilerAndRunner {
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
 
-        String libPath = Play.application().configuration().getString("compilation.libPath");
-        String tmpPath = Play.application().configuration().getString("compilation.tmpPath");
+        String libPath = Play.application().configuration().getString("datas.compilation.libPath");
+        String tmpPath = Play.application().configuration().getString("datas.compilation.tmpPath");
         Files.createDirectories(Paths.get(tmpPath));
         Path tempDirectory = Files.createTempDirectory(Paths.get(tmpPath), "choco-");
 
