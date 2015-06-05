@@ -43,7 +43,7 @@ public class StringCompilerAndRunner {
     private static final String CALL_JAVA_MAIN = "java -cp %1$s/bin/"+ File.pathSeparator + "%2$s %3$s";
 
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
-    private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
+    private static final String PATTERN_MAIN = "public class (\\w*)";
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
@@ -55,6 +55,7 @@ public class StringCompilerAndRunner {
 
         String className = findMainClass(code).orElse("Main");
         createFilesBeforeCompile(code, className, tempDirectory);
+        //setEnvironmentVarTo("");
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
         compileCode(compilationAndRunResult, className, libPath, tempDirectory);
 
@@ -67,6 +68,21 @@ public class StringCompilerAndRunner {
         System.out.println("Fin compileAndRun");
 
         return compilationAndRunResult;
+    }
+
+    private void setEnvironmentVarTo(String s) {
+        System.out.println("Avant set env");
+        try {
+            ProcessStrategy processStrategy = new ProcessStrategy("bash app/datas/compilation/setenv.sh" + s, new CompilationAndRunResult()) {
+                @Override
+                public void handleOutputs() {
+                    // ne rien faire des outputs
+                }
+            };
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Apres set env");
     }
 
     private void deleteTmpFolder(Path tempDirectory) {
@@ -124,6 +140,7 @@ public class StringCompilerAndRunner {
         Files.createDirectories(path);
         return path;
     }
+
 
 
 }
