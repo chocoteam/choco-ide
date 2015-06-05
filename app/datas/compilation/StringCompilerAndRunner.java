@@ -32,7 +32,7 @@ public class StringCompilerAndRunner {
      * $2 : libpath
      * $3 : classname
      */
-    private static final String CALL_JAVAC_MAIN = "javac -J-Xmx512m -J-Xms64m -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java";
+    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java";
 
     /**
      * Pattern d'exécution
