@@ -84,6 +84,14 @@ function defineAceKeywords(){
 
 
 function compile() {
+    // Changing the 'Run' button to 'Loading'
+    $('#runButton').removeClass("btn-success");
+    $('#runButton').addClass("btn-warning");
+    $('#runButton p').text("Loading ...")
+    $('#runButton span').removeClass("glyphicon-play-circle");
+    $('#runButton span').addClass("glyphicon-refresh");
+    $('#runButton span').addClass("glyphicon-refresh-animate");
+
     var editor = ace.edit("editor");
     var code = editor.getSession().getValue();
 
@@ -130,6 +138,16 @@ function compile() {
             "The following error occurred: "+
             textStatus, errorThrown
         );
+    });
+
+    request.always(function (jqXHR, textStatus, errorThrown) {
+        // Changing the 'Loading' button to 'Run'
+        $('#runButton').removeClass("btn-warning");
+        $('#runButton').addClass("btn-success");
+        $('#runButton p').text("Run");
+        $('#runButton span').removeClass("glyphicon-refresh");
+        $('#runButton span').removeClass("glyphicon-refresh-animate");
+        $('#runButton span').addClass("glyphicon-play-circle");
     });
 }
 

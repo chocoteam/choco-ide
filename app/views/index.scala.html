@@ -4,10 +4,9 @@
 
     <header id="header" class="row">
         <div class="col-xs-offset-3">
-            <img src='@routes.Assets.at("images/ChocoLogo-160x135.png")'/>
+            <img id="chocologo" src='@routes.Assets.at("images/ChocoLogo-160x135.png")'/>
             <div class="text-justify">
-                <h1>Choco IDE</h1>
-                <h4>Ultra light IDE to try Choco</h4>
+                <h4>Try Choco online !</h4>
                 <a href="http://choco-solver.org/">http://choco-solver.org/</a>
             </div>
         </div>
@@ -16,19 +15,19 @@
     <section class="row">
         <div id="editor" class="col-xs-12 col-md-6"></div>
         <div id="console" class="col-xs-12 col-md-6"></div>
-        <div id="not-editor" class="col-xs-12">
-            <span class="row text-left">
-                <p class="col-xs-6">Choose a sample to run : </p><select id="samples" class="col-xs-6"></select>
+        <div id="not-editor" class="col-xs-12 col-md-12">
+            <span class="row">
+                <p class="col-xs-6">Choose a sample to run or drag a class of your own ! </p><select id="samples" class="col-xs-6"></select>
             </span>
-            <p class="col-xs-12">Or drag a class of your own !</p>
-            <button type="button" class="btn btn-success btn-lg col-xs-4 col-xs-offset-1 col-md-3 col-md-offset-2" onclick="compile()">
-                <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
-                Run
-            </button>
-            <button type="button" class="btn btn-danger btn-lg col-xs-4 col-xs-offset-2 col-md-3 col-md-offset-1" data-toggle="modal" data-target="#reportModal">
-                <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
-                Report
-            </button>
+
+            <div class="row">
+                <button id="runButton" type="button" class="btn btn-success btn-lg col-xs-1 col-xs-offset-4 col-md-1 col-md-offset-4" onclick="compile()">
+                    <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-danger btn-lg col-xs-1 col-xs-offset-2 col-md-1 col-md-offset-2" data-toggle="modal" data-target="#reportModal">
+                    <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+                </button>
+            </div>
         </div>
             <!-- Report Modal -->
         <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
