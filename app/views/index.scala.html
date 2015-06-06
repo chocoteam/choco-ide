@@ -17,7 +17,11 @@
         <div id="console" class="col-xs-12 col-md-6"></div>
         <div id="not-editor" class="col-xs-12 col-md-12">
             <span class="row">
-                <p class="col-xs-6">Choose a sample to run or drag a class of your own ! </p><select id="samples" class="col-xs-6"></select>
+                <p class="col-xs-6">Choose a sample to run or drag a class of your own ! </p>
+                <select id="samples" class="col-xs-4"></select>
+                <button id="refreshSamplesButton" type="button" class="btn btn-primary btn-xs" onclick="updateSamples()">
+                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                </button>
             </span>
 
             <button id="runButton" type="button" class="btn btn-success btn-lg col-xs-1 col-xs-offset-4 col-md-1 col-md-offset-4" onclick="compile()">
@@ -56,6 +60,18 @@
                 </div>
             </div>
         </div>
+
+            <!-- Alert when compile service returns another code than HTTP 200 -->
+        <div class="modal fade" id="alertCompileFailure" tabindex="-1" role="dialog" aria-labelledby="alertCompileFailureLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="alert alert-danger" role="alert">
+                    <span>
+                        <p>Error occurred when compiling your source code, please try again later.</p>
+                    </span>
+                </div>
+            </div>
+        </div>
+
             <!-- Alert when report submitted successfully -->
         <div class="modal fade" id="alertReportSuccess" tabindex="-1" role="dialog" aria-labelledby="alertReportSuccessLabel" aria-hidden="true">
             <div class="modal-dialog">
