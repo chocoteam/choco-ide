@@ -55,7 +55,6 @@ public class StringCompilerAndRunner {
 
         String className = findMainClass(code).orElse("Main");
         createFilesBeforeCompile(code, className, tempDirectory);
-        //setEnvironmentVarTo("");
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
         compileCode(compilationAndRunResult, className, libPath, tempDirectory);
 
@@ -68,21 +67,6 @@ public class StringCompilerAndRunner {
         System.out.println("Fin compileAndRun");
 
         return compilationAndRunResult;
-    }
-
-    private void setEnvironmentVarTo(String s) {
-        System.out.println("Avant set env");
-        try {
-            ProcessStrategy processStrategy = new ProcessStrategy("bash app/datas/compilation/setenv.sh" + s, new CompilationAndRunResult()) {
-                @Override
-                public void handleOutputs() {
-                    // ne rien faire des outputs
-                }
-            };
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Apres set env");
     }
 
     private void deleteTmpFolder(Path tempDirectory) {
