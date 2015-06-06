@@ -18,7 +18,6 @@ public abstract class ProcessStrategy {
 
     public ProcessStrategy(String command, CompilationAndRunResult compilationAndRunResult) throws IOException {
         this.compilationAndRunResult = compilationAndRunResult;
-        System.out.println("JAVA_TOOL_OPTIONS = " + System.getenv("JAVA_TOOL_OPTIONS"));
         Process p = Runtime.getRuntime().exec(command);
         mapRes = new HashMap<>();
 
