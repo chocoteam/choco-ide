@@ -43,7 +43,7 @@ public class StringCompilerAndRunner {
     private static final String CALL_JAVA_MAIN = "java -cp %1$s/bin/"+ File.pathSeparator + "%2$s %3$s";
 
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
-    private static final String PATTERN_MAIN = "public class (\\w*)\\s\\{[\\n|\\s]*\\s*public static void main";
+    private static final String PATTERN_MAIN = "public class (\\w*)";
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
@@ -124,6 +124,7 @@ public class StringCompilerAndRunner {
         Files.createDirectories(path);
         return path;
     }
+
 
 
 }
