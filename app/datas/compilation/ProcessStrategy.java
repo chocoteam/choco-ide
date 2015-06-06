@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by yann on 04/06/15.
@@ -39,12 +40,7 @@ public abstract class ProcessStrategy {
     }
 
     private String stringOfReader(BufferedReader reader) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null){
-            sb.append(line+"\n");
-        }
-        return sb.toString();
+        return reader.lines().collect(Collectors.joining("\n"));
     }
 
     public abstract void handleOutputs();
