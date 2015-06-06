@@ -36,6 +36,6 @@ public class CompileStrategy extends ProcessStrategy {
     public static boolean keepLine(String l) {
         List<String> patternsToRemove = Arrays.asList(STARTING_JAVA_TOOL_OPTIONS);
         // indique si aucun des patterns match la ligne
-        return !patternsToRemove.stream().anyMatch(p-> Pattern.compile(p).matcher(l).matches());
+        return patternsToRemove.stream().noneMatch(p-> Pattern.compile(p).matcher(l).matches());
     }
 }
