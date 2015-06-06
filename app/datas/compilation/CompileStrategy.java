@@ -21,8 +21,8 @@ public class CompileStrategy extends ProcessStrategy {
     public void handleOutputs() {
         String messErr = this.mapRes.get(RunEvent.Kind.ERR);
 
-        if (!"".equals(messErr)) {
-            String filteredMess = filterOutLines(messErr);
+        String filteredMess = filterOutLines(messErr);
+        if (!"".equals(filteredMess)) {
             this.compilationAndRunResult.addError(filteredMess);
         }
     }
