@@ -32,7 +32,7 @@ public class StringCompilerAndRunner {
      * $2 : libpath
      * $3 : classname
      */
-    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java";
+    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java -Xlint:unchecked";
 
     /**
      * Pattern d'exécution
@@ -57,10 +57,7 @@ public class StringCompilerAndRunner {
         createFilesBeforeCompile(code, className, tempDirectory);
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
         compileCode(compilationAndRunResult, className, libPath, tempDirectory);
-
-        if(canRunCode(compilationAndRunResult)) {
-            runCode(compilationAndRunResult, className, libPath, tempDirectory);
-        }
+        runCode(compilationAndRunResult, className, libPath, tempDirectory);
 
         deleteTmpFolder(tempDirectory);
 
@@ -83,10 +80,6 @@ public class StringCompilerAndRunner {
         }
 
         return Optional.empty();
-    }
-
-    private boolean canRunCode(CompilationAndRunResult compilationAndRunResult) {
-        return compilationAndRunResult.getErrors().isEmpty();
     }
 
     private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
