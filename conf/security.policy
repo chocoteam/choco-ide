@@ -1,1 +1,9 @@
-// Empty - no permissions
+/* AUTOMATICALLY GENERATED ON Sat Jun 06 21:59:59 CEST 2015*/
+/* DO NOT EDIT */
+
+grant {
+  permission java.util.PropertyPermission "slf4j.detectLoggerNameMismatch", "read";
+  permission java.lang.RuntimePermission "createSecurityManager";
+  permission java.util.PropertyPermission "*", "read";
+};
+

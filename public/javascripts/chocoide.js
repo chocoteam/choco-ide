@@ -1,5 +1,6 @@
 // Global variable for Choco samples
 var samples;
+var chocoLangClasses = "Object";
 
 window.onload = function () {
     // Fullfill drilldown list with Choco samples
@@ -9,11 +10,27 @@ window.onload = function () {
     ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/choco");
+
     editor.$blockScrolling = Infinity;
     editor.setOptions({
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: false
+    });
+
+    var request = $.ajax({
+        url: "/getKeywords",
+        type: "get"
+    });
+
+    request.success(function (response, textStatus, jqXHR) {
+        var responseObject = JSON.parse(response);
+        chocoLangClasses += "|"+responseObject;
+        console.log(chocoLangClasses)
+        editor.getSession().setMode("ace/mode/choco");
+    });
+
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("Error while getting /getKeywords url");
     });
 
     // Event handler when selected value has changed

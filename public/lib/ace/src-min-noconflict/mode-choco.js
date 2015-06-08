@@ -1034,22 +1034,6 @@ ace.define("ace/mode/java_highlight_rules",["require","exports","module","ace/li
     var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
     var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
-    var chocoLangClasses = "Object";
-
-    var request = $.ajax({
-        url: "/getKeywords",
-        type: "get"
-    });
-
-    request.success(function (response, textStatus, jqXHR) {
-        var responseObject = JSON.parse(response);
-        chocoLangClasses += "|"+responseObject.listClasses;
-    });
-
-    request.fail(function (jqXHR, textStatus, errorThrown) {
-        console.log("Error while getting /getKeywords url");
-    });
-
     var JavaHighlightRules = function() {
         var keywords = (
         "abstract|continue|for|new|switch|" +
