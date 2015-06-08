@@ -25,26 +25,6 @@ public class Application extends Controller {
         return ok(index.render("Let's get working guys !"));
     }
 
-    /**
-     * Call to datas.compilation service
-     *
-     * @return result datas.compilation result
-     */
-//    public static Result compile() throws IllegalAccessException, InstantiationException {
-//        try {
-//            final Map<String, String[]> mapParameters = request().body().asFormUrlEncoded();
-//            String code = mapParameters.get("body")[0];
-//            System.out.println("Code reçu : " + code);
-//
-//            StringCompilerAndRunner compilerAndRunner = new StringCompilerAndRunner();
-//            CompilationAndRunResult result = compilerAndRunner.compileAndRun(code);
-//            return ok(new ObjectMapper().<JsonNode>valueToTree(result));
-//        } catch(Exception e){
-//            Logger.warn("Problem while compiling and running", e);
-//            return internalServerError("Problem while compiling and running : "+e.getMessage());
-//        }
-//    }
-
     public static WebSocket<String> socket(){
         return new WebSocket<String>() {
             @Override

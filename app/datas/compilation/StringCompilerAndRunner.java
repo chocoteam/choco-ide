@@ -111,7 +111,7 @@ public class StringCompilerAndRunner {
     private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, WebSocket.Out out) throws IOException {
         String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
         System.out.println(commande);
-        new CompileStrategy(commande, compilationAndRunResult, out).handleOutputs();
+        new CompileStrategy(commande, compilationAndRunResult, out);
     }
 
     private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, WebSocket.Out out) throws IOException {

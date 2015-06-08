@@ -26,7 +26,6 @@ window.onload = function () {
     request.success(function (response, textStatus, jqXHR) {
         var responseObject = JSON.parse(response);
         chocoLangClasses += "|"+responseObject;
-        console.log(chocoLangClasses)
         editor.getSession().setMode("ace/mode/choco");
     });
 
@@ -62,7 +61,14 @@ window.onload = function () {
 
     socket = new WebSocket("ws://localhost:9000/socket");
     socket.onmessage = function(event){
-        consoleCode.innerHTML+="<p>"+event.data+"</p>";
+        var data = JSON.parse(event.data);
+
+        console.log(data.kind);
+        var className = "stdOut";
+        if(data.kind == "ERR") {
+            className = "stdErr"
+        }
+        consoleCode.innerHTML+="<p class=\""+className+"\">"+data.message+"</p>";
         $('#runButton').removeClass("btn-warning");
         $('#runButton').addClass("btn-success");
         $('#runButton span').removeClass("glyphicon-refresh");
