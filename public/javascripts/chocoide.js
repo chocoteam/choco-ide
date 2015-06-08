@@ -1,6 +1,7 @@
 // Global variable for Choco samples
 var samples;
 var chocoLangClasses = "Object";
+var socket;
 
 window.onload = function () {
     // Fullfill drilldown list with Choco samples
@@ -57,6 +58,18 @@ window.onload = function () {
         return false; // avoiding event to be processed
     });
 
+    var consoleCode = document.getElementById('console');
+
+    socket = new WebSocket("ws://localhost:9000/socket");
+    socket.onmessage = function(event){
+        consoleCode.innerHTML+=event.data;
+        $('#runButton').removeClass("btn-warning");
+        $('#runButton').addClass("btn-success");
+        $('#runButton span').removeClass("glyphicon-refresh");
+        $('#runButton span').removeClass("glyphicon-refresh-animate");
+        $('#runButton span').addClass("glyphicon-play-circle");
+    };
+
     settingDragNDrop();
 }
 
@@ -101,10 +114,6 @@ function updateSamples() {
     });
 }
 
-function defineAceKeywords(){
-
-}
-
 // Compile the source code
 function compile() {
     // Changing the 'Run' button to 'Loading'
@@ -118,52 +127,55 @@ function compile() {
     var code = editor.getSession().getValue();
 
     var consoleCode = document.getElementById('console');
+    consoleCode.innerHTML="";
 
-    // Fire the HTTP POST request
-    var request = $.ajax({
-        url: "/compile",
-        type: "post",
-        data: {body: code}
-    });
+    socket.send(code);
 
-    // Callback handler that will be called on success - HTTP 200 OK
-    request.done(function (response, textStatus, jqXHR){
-        var compilationEvents = response.errors;
-        var runtimeEvents = response.events;
-
-
-        consoleCode.innerHTML = "";
-
-        compilationEvents.forEach(function(compilationEvent) {
-            consoleCode.innerHTML += "<pre class=\"compilationErr\">" + "Error during datas.compilation : " + compilationEvent + "</pre>";
-
-        });
-
-        runtimeEvents.forEach(function(runtimeEvent) {
-            var className = "stdOut";
-            if(runtimeEvent.kind == "stderr") {
-                className = "stdErr"
-            }
-
-            consoleCode.innerHTML += "<pre class=\""+className+"\">" + runtimeEvent.message + "</pre>";
-
-        });
-    });
-
-
-    // Callback handler that will be called on failure
-    request.fail(function (jqXHR, textStatus, errorThrown) {
-        $('#alertCompileFailure').modal('show');
-    });
-
-    request.always(function (jqXHR, textStatus, errorThrown) {
-        // Changing the 'Loading' button to 'Run'
-        $('#runButton').removeClass("btn-warning");
-        $('#runButton').addClass("btn-success");
-        $('#runButton span').removeClass("glyphicon-refresh");
-        $('#runButton span').removeClass("glyphicon-refresh-animate");
-        $('#runButton span').addClass("glyphicon-play-circle");
-    });
+    //// Fire the HTTP POST request
+    //var request = $.ajax({
+    //    url: "/compile",
+    //    type: "post",
+    //    data: {body: code}
+    //});
+    //
+    //// Callback handler that will be called on success - HTTP 200 OK
+    //request.done(function (response, textStatus, jqXHR){
+    //    var compilationEvents = response.errors;
+    //    var runtimeEvents = response.events;
+    //
+    //
+    //    consoleCode.innerHTML = "";
+    //
+    //    compilationEvents.forEach(function(compilationEvent) {
+    //        consoleCode.innerHTML += "<pre class=\"compilationErr\">" + "Error during datas.compilation : " + compilationEvent + "</pre>";
+    //
+    //    });
+    //
+    //    runtimeEvents.forEach(function(runtimeEvent) {
+    //        var className = "stdOut";
+    //        if(runtimeEvent.kind == "stderr") {
+    //            className = "stdErr"
+    //        }
+    //
+    //        consoleCode.innerHTML += "<pre class=\""+className+"\">" + runtimeEvent.message + "</pre>";
+    //
+    //    });
+    //});
+    //
+    //
+    //// Callback handler that will be called on failure
+    //request.fail(function (jqXHR, textStatus, errorThrown) {
+    //    $('#alertCompileFailure').modal('show');
+    //});
+    //
+    //request.always(function (jqXHR, textStatus, errorThrown) {
+    //    // Changing the 'Loading' button to 'Run'
+    //    $('#runButton').removeClass("btn-warning");
+    //    $('#runButton').addClass("btn-success");
+    //    $('#runButton span').removeClass("glyphicon-refresh");
+    //    $('#runButton span').removeClass("glyphicon-refresh-animate");
+    //    $('#runButton span').addClass("glyphicon-play-circle");
+    //});
 }
 
 

@@ -2,6 +2,7 @@ package datas.compilation;
 
 import datas.Utils.FileUtils;
 import play.Play;
+import play.mvc.WebSocket;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -32,7 +33,7 @@ public class StringCompilerAndRunner {
      * $2 : libpath
      * $3 : classname
      */
-    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java -Xlint:unchecked";
+    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/" + File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java -Xlint:unchecked";
 
     /**
      * Pattern d'exécution
@@ -40,15 +41,17 @@ public class StringCompilerAndRunner {
      * $2 : libpath
      * $3 : classname
      */
-    private static final String CALL_JAVA_MAIN = "java -Djava.security.manager -Djava.security.policy=="+ Play.application().configuration().getString("security.manager.path")
-                                                +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s %3$s";
+    private static final String CALL_JAVA_MAIN = "java -Djava.security.manager -Djava.security.policy==" + Play.application().configuration().getString("security.manager.path")
+            + " -cp %1$s/bin/" + File.pathSeparator + "%2$s %3$s";
 
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class (\\w*)";
 
     private static final String PATTERN_PACKAGE = "package (.*);";
 
-    public CompilationAndRunResult compileAndRun(String code) throws IOException {
+
+    public CompilationAndRunResult compileAndRun(String code, WebSocket.Out out) throws IOException {
+
         System.out.println("Debut compileAndRun");
 
         String libPath = Play.application().configuration().getString("datas.compilation.libPath");
@@ -58,13 +61,15 @@ public class StringCompilerAndRunner {
 
         String className = findMainClass(code).orElse("Main");
         String packageName = findPackage(code).orElse("");
-        String fullClassName = packageName.equals("")?className:packageName+"."+className;
+        String fullClassName = packageName.equals("") ? className : packageName + "." + className;
         System.out.println("Full name : " + fullClassName);
 
         createFilesBeforeCompile(code, className, tempDirectory);
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
-        compileCode(compilationAndRunResult, className, libPath, tempDirectory);
-        runCode(compilationAndRunResult, fullClassName, libPath, tempDirectory);
+
+        compileCode(compilationAndRunResult, className, libPath, tempDirectory, out);
+        runCode(compilationAndRunResult, className, libPath, tempDirectory, out);
+
 
         //deleteTmpFolder(tempDirectory);
 
@@ -80,7 +85,7 @@ public class StringCompilerAndRunner {
     private Optional<String> findMainClass(String code) {
         Pattern pattern = Pattern.compile(PATTERN_MAIN);
         Matcher matcher = pattern.matcher(code);
-        while(matcher.find()){
+        while (matcher.find()) {
             String name = matcher.group(1);
             System.out.println("main class : \"" + name + "\"");
             return Optional.of(name);
@@ -89,10 +94,11 @@ public class StringCompilerAndRunner {
         return Optional.empty();
     }
 
+
     private Optional<String> findPackage(String code) {
         Pattern pattern = Pattern.compile(PATTERN_PACKAGE);
         Matcher matcher = pattern.matcher(code);
-        while(matcher.find()){
+        while (matcher.find()) {
             String name = matcher.group(1);
             System.out.println("package : \"" + name + "\"");
             return Optional.of(name);
@@ -101,16 +107,17 @@ public class StringCompilerAndRunner {
         return Optional.empty();
     }
 
-    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
+
+    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, WebSocket.Out out) throws IOException {
         String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
         System.out.println(commande);
-        new CompileStrategy(commande, compilationAndRunResult).handleOutputs();
+        new CompileStrategy(commande, compilationAndRunResult, out).handleOutputs();
     }
 
-    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
+    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, WebSocket.Out out) throws IOException {
         String commande = String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className);
         System.out.println(commande);
-        new RunStrategy(commande, compilationAndRunResult).handleOutputs();
+        new RunStrategy(commande, compilationAndRunResult, out);
     }
 
     private void createFilesBeforeCompile(String code, String className, Path tempDirectory) throws IOException {
@@ -136,7 +143,6 @@ public class StringCompilerAndRunner {
         Files.createDirectories(path);
         return path;
     }
-
 
 
 }
