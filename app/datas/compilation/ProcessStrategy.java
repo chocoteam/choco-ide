@@ -1,13 +1,11 @@
 package datas.compilation;
 
-import org.jetbrains.annotations.NotNull;
+import play.mvc.WebSocket;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 
 /**
  * Created by yann on 04/06/15.
@@ -15,12 +13,15 @@ import java.util.stream.Collectors;
 public abstract class ProcessStrategy {
 
     protected final CompilationAndRunResult compilationAndRunResult;
-    protected HashMap<RunEvent.Kind, String> mapRes;
+    protected WebSocket.Out out;
+    //protected HashMap<RunEvent.Kind, String> mapRes;
 
-    public ProcessStrategy(String command, CompilationAndRunResult compilationAndRunResult) throws IOException {
+    public ProcessStrategy(String command, CompilationAndRunResult compilationAndRunResult, WebSocket.Out out) throws IOException {
         this.compilationAndRunResult = compilationAndRunResult;
         Process p = Runtime.getRuntime().exec(command);
-        mapRes = new HashMap<>();
+        //mapRes = new HashMap<>();
+
+        this.out = out;
 
         readOutputAndStoreString(p.getInputStream(), RunEvent.Kind.OUT);
         readOutputAndStoreString(p.getErrorStream(), RunEvent.Kind.ERR);
@@ -28,20 +29,22 @@ public abstract class ProcessStrategy {
 
     private void readOutputAndStoreString(InputStream stream, RunEvent.Kind kind) throws IOException {
         BufferedReader reader = new BufferedReader((new InputStreamReader(stream)));
-        mapRes.put(kind, getAndOutput(reader, kind));
+
+        reader.lines().forEach(x->out.write(x+"\n"));
+        //mapRes.put(kind, getAndOutput(reader, kind));
     }
 
-    @NotNull
-    private String getAndOutput(BufferedReader reader, RunEvent.Kind kind) throws IOException {
-        System.out.println(kind + ":");
-        String res = stringOfReader(reader);
-        System.out.println("\""+res+"\"");
-        return res;
-    }
-
-    private String stringOfReader(BufferedReader reader) throws IOException {
-        return reader.lines().collect(Collectors.joining("\n"));
-    }
+//    @NotNull
+//    private String getAndOutput(BufferedReader reader, RunEvent.Kind kind) throws IOException {
+//        System.out.println(kind + ":");
+////        String res = stringOfReader(reader);
+////        System.out.println("\""+res+"\"");
+//        return res;
+//    }
+//
+////    private String stringOfReader(BufferedReader reader) throws IOException {
+////        return reader.lines().collect(Collectors.joining("\n"));
+////    }
 
     public abstract void handleOutputs();
 }

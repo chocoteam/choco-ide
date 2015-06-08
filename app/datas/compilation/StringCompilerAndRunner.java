@@ -2,6 +2,7 @@ package datas.compilation;
 
 import datas.Utils.FileUtils;
 import play.Play;
+import play.mvc.WebSocket;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -46,7 +47,7 @@ public class StringCompilerAndRunner {
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class (\\w*)";
 
-    public CompilationAndRunResult compileAndRun(String code) throws IOException {
+    public CompilationAndRunResult compileAndRun(String code, WebSocket.Out out) throws IOException {
         System.out.println("Debut compileAndRun");
 
         String libPath = Play.application().configuration().getString("datas.compilation.libPath");
@@ -57,8 +58,8 @@ public class StringCompilerAndRunner {
         String className = findMainClass(code).orElse("Main");
         createFilesBeforeCompile(code, className, tempDirectory);
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
-        compileCode(compilationAndRunResult, className, libPath, tempDirectory);
-        runCode(compilationAndRunResult, className, libPath, tempDirectory);
+        compileCode(compilationAndRunResult, className, libPath, tempDirectory,out);
+        runCode(compilationAndRunResult, className, libPath, tempDirectory, out);
 
         deleteTmpFolder(tempDirectory);
 
@@ -83,16 +84,16 @@ public class StringCompilerAndRunner {
         return Optional.empty();
     }
 
-    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
+    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, WebSocket.Out out) throws IOException {
         String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
         System.out.println(commande);
-        new CompileStrategy(commande, compilationAndRunResult).handleOutputs();
+        new CompileStrategy(commande, compilationAndRunResult, out).handleOutputs();
     }
 
-    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
+    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, WebSocket.Out out) throws IOException {
         String commande = String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className);
         System.out.println(commande);
-        new RunStrategy(commande, compilationAndRunResult).handleOutputs();
+        new RunStrategy(commande, compilationAndRunResult,out);
     }
 
     private void createFilesBeforeCompile(String code, String className, Path tempDirectory) throws IOException {
