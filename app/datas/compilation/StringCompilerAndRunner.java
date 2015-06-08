@@ -46,6 +46,8 @@ public class StringCompilerAndRunner {
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class (\\w*)";
 
+    private static final String PATTERN_PACKAGE = "package (.*);";
+
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
 
@@ -55,12 +57,16 @@ public class StringCompilerAndRunner {
         Path tempDirectory = Files.createTempDirectory(Paths.get(tmpPath), "choco-");
 
         String className = findMainClass(code).orElse("Main");
+        String packageName = findPackage(code).orElse("");
+        String fullClassName = packageName.equals("")?className:packageName+"."+className;
+        System.out.println("Full name : " + fullClassName);
+
         createFilesBeforeCompile(code, className, tempDirectory);
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
         compileCode(compilationAndRunResult, className, libPath, tempDirectory);
-        runCode(compilationAndRunResult, className, libPath, tempDirectory);
+        runCode(compilationAndRunResult, fullClassName, libPath, tempDirectory);
 
-        deleteTmpFolder(tempDirectory);
+        //deleteTmpFolder(tempDirectory);
 
         System.out.println("Fin compileAndRun");
 
@@ -77,6 +83,18 @@ public class StringCompilerAndRunner {
         while(matcher.find()){
             String name = matcher.group(1);
             System.out.println("main class : \"" + name + "\"");
+            return Optional.of(name);
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<String> findPackage(String code) {
+        Pattern pattern = Pattern.compile(PATTERN_PACKAGE);
+        Matcher matcher = pattern.matcher(code);
+        while(matcher.find()){
+            String name = matcher.group(1);
+            System.out.println("package : \"" + name + "\"");
             return Optional.of(name);
         }
 
