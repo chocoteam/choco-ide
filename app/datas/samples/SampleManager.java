@@ -5,6 +5,7 @@ import play.Play;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -38,7 +39,11 @@ public class SampleManager {
         String propFile = Play.application().configuration().getString("sample.name.file");
         if (propFile != null) {
             try (FileInputStream fis = new FileInputStream(new File(propFile))) {
-                this.nameProperties.load(fis);
+                try (InputStreamReader isr = new InputStreamReader(fis, "UTF-8")) {
+                    this.nameProperties.load(isr);
+                } catch (Exception e) {
+                    Logger.warn("Can't load the specified name properties file");
+                }
             } catch (Exception e) {
                 Logger.warn("Can't load the specified name properties file");
             }
@@ -60,7 +65,7 @@ public class SampleManager {
      */
     public Collection<Sample> getAvailableSample() {
         //Fill the map
-        if(this.sampleMap.isEmpty()) {
+        if (this.sampleMap.isEmpty()) {
             //List all the files
             File[] files = this.rootDirectory.listFiles();
             if (files != null) {
@@ -70,7 +75,7 @@ public class SampleManager {
                             String filename = file.getName();
                             String name = this.nameProperties.containsKey(filename) ? this.nameProperties.getProperty(filename) : filename;
                             Sample sample = new Sample(name, filename, getContent(file));
-                            sampleMap.put(sample.getFilename(),sample);
+                            sampleMap.put(sample.getFilename(), sample);
                         } catch (Exception e) {
                             Logger.error("Can't read the given sample file %s", file.getPath(), e);
                         }
@@ -98,7 +103,7 @@ public class SampleManager {
      */
     private static String getContent(File file) throws Exception {
         StringBuilder sb = new StringBuilder();
-        try (Scanner scan = new Scanner(file)) {
+        try (Scanner scan = new Scanner(file, "UTF-8")) {
             while (scan.hasNextLine()) {
                 sb.append(scan.nextLine());
                 if (scan.hasNextLine()) sb.append("\n");
