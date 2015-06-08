@@ -31,7 +31,7 @@ public class StringCompilerAndRunner {
      * $1 : tmp folder
      * $2 : libpath
      * $3 : classname
-     */
+     */ 
     private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java -Xlint:unchecked";
 
     /**
