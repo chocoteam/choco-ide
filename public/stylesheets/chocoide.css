@@ -64,8 +64,7 @@ section button {
 }
 
 .compilationErr {
-    background-color: red;
-    color: white;
+    color: red;
 }
 
 .stdOut {
@@ -74,6 +73,11 @@ section button {
 
 .stdErr {
     color: red;
+}
+
+#refreshSamplesButton {
+    margin-top: 0px;
+    margin-left: 6px;
 }
 
 /* Rotating the 'Loading' button */

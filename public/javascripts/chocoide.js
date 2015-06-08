@@ -43,6 +43,7 @@ window.onload = function () {
     settingDragNDrop();
 }
 
+// Pick up all availables Java/Choco samples
 function updateSamples() {
     var select = $('#samples');
 
@@ -60,6 +61,10 @@ function updateSamples() {
         ace.edit("editor").getSession().setValue(jQuery.parseJSON(samples)[0].content);
         var jsonSamples = jQuery.parseJSON(response);
 
+        // Cleaning the drilldown
+        $('#samples').removeAttr("disabled");
+        $('#samples').empty();
+
         // Updating the drilldown
         jsonSamples.forEach(function (jsonSample) {
             var option = document.createElement("option");
@@ -70,11 +75,12 @@ function updateSamples() {
     });
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
-        // Log the error to the console
-        console.log(
-            "The following error occurred: "+
-            textStatus, errorThrown
-        );
+        // Lock the samples drilldown
+        $('#samples').attr("disabled", "true");
+        var option = document.createElement("option");
+        option.text = "No samples available";
+        option.value = "0";
+        select.append(option);
     });
 }
 
@@ -82,12 +88,11 @@ function defineAceKeywords(){
 
 }
 
-
+// Compile the source code
 function compile() {
     // Changing the 'Run' button to 'Loading'
     $('#runButton').removeClass("btn-success");
     $('#runButton').addClass("btn-warning");
-    $('#runButton p').text("Loading ...")
     $('#runButton span').removeClass("glyphicon-play-circle");
     $('#runButton span').addClass("glyphicon-refresh");
     $('#runButton span').addClass("glyphicon-refresh-animate");
@@ -106,8 +111,6 @@ function compile() {
 
     // Callback handler that will be called on success - HTTP 200 OK
     request.done(function (response, textStatus, jqXHR){
-        console.log("Request done !");
-
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
@@ -115,7 +118,7 @@ function compile() {
         consoleCode.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
-            consoleCode.innerHTML += "<p class=\"compilationErr\"><pre>" + "Error during datas.compilation : " + compilationEvent + "</pre></p>";
+            consoleCode.innerHTML += "<pre class=\"compilationErr\">" + "Error during datas.compilation : " + compilationEvent + "</pre>";
 
         });
 
@@ -125,7 +128,7 @@ function compile() {
                 className = "stdErr"
             }
 
-            consoleCode.innerHTML += "<p class="+className+"><pre>" + runtimeEvent.message + "</pre></p>";
+            consoleCode.innerHTML += "<pre class=\""+className+"\">" + runtimeEvent.message + "</pre>";
 
         });
     });
@@ -133,18 +136,13 @@ function compile() {
 
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown) {
-        // Log the error to the console
-        console.log(
-            "The following error occurred: "+
-            textStatus, errorThrown
-        );
+        $('#alertCompileFailure').modal('show');
     });
 
     request.always(function (jqXHR, textStatus, errorThrown) {
         // Changing the 'Loading' button to 'Run'
         $('#runButton').removeClass("btn-warning");
         $('#runButton').addClass("btn-success");
-        $('#runButton p').text("Run");
         $('#runButton span').removeClass("glyphicon-refresh");
         $('#runButton span').removeClass("glyphicon-refresh-animate");
         $('#runButton span').addClass("glyphicon-play-circle");
@@ -152,6 +150,7 @@ function compile() {
 }
 
 
+// Grab all relevant information and send the report using the Java service
 function sendReport(userEmail, comment) {
     var editor = ace.edit("editor");
     var sourceCode = editor.getSession().getValue();
@@ -191,12 +190,6 @@ function sendReport(userEmail, comment) {
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown){
         $('#alertReportFailure').modal('show');
-
-        // Log the error to the console
-        console.error(
-            "The following error occurred: "+
-            textStatus, errorThrown
-        );
     });
 }
 
