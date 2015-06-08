@@ -30,7 +30,7 @@ public abstract class ProcessStrategy {
     private void readOutputAndStoreString(InputStream stream, RunEvent.Kind kind) throws IOException {
         BufferedReader reader = new BufferedReader((new InputStreamReader(stream)));
 
-        reader.lines().forEach(x->out.write(x+"\n"));
+        reader.lines().forEach(x->out.write(x));
         //mapRes.put(kind, getAndOutput(reader, kind));
     }
 

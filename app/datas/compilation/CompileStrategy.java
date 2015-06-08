@@ -3,11 +3,7 @@ package datas.compilation;
 import play.mvc.WebSocket;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
 
 /**
  * Created by yann on 04/06/15.

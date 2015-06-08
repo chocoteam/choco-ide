@@ -62,7 +62,7 @@ window.onload = function () {
 
     socket = new WebSocket("ws://localhost:9000/socket");
     socket.onmessage = function(event){
-        consoleCode.innerHTML+=event.data;
+        consoleCode.innerHTML+="<p>"+event.data+"</p>";
         $('#runButton').removeClass("btn-warning");
         $('#runButton').addClass("btn-success");
         $('#runButton span').removeClass("glyphicon-refresh");
