@@ -1,0 +1,97 @@
+body {
+    background-color: #035E93;
+    min-width: 320px;
+}
+
+header, footer {
+    height: 10%;
+    margin-left: 0px;
+    margin-right: 0px;
+    color: white;
+}
+
+header div, footer div {
+    vertical-align: top;
+    display: inline-block;
+}
+
+header a,
+header a:active,
+header a:visited{
+    color: white;
+    text-decoration: none;
+}
+
+header a:hover {
+    background-color: #048ad6;
+    color: white;
+    text-decoration: none;
+}
+
+#chocologo{
+    height: 90px;
+}
+
+section {
+    background-color: #ffffff;
+    padding-bottom: 2%;
+}
+
+section button {
+    margin: 1% 0px 0% 0px;
+}
+
+#editor {
+    position: relative;
+    height: 420px;
+}
+
+#console {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 420px;
+    border: 1px solid black;
+}
+
+
+.error {
+    color: red;
+    background-color: black;
+}
+
+.success {
+    color: blue;
+}
+
+.compilationErr {
+    color: red;
+}
+
+.stdOut {
+    color: blue;
+}
+
+.stdErr {
+    color: red;
+}
+
+#refreshSamplesButton {
+    margin-top: 0px;
+    margin-left: 6px;
+}
+
+/* Rotating the 'Loading' button */
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
