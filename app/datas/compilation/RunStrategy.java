@@ -19,7 +19,7 @@ public class RunStrategy extends ProcessStrategy {
      * $3 : classname
      */
     private static final String CALL_JAVA_MAIN = "java -Djava.security.manager -Djava.security.policy=="+ Play.application().configuration().getString("security.manager.path")
-            +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s"+File.pathSeparator+" -Dlogback.configurationFile=lib/logback.xml %3$s";
+            +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s -Dlogback.configurationFile=lib/logback.xml %3$s";
 
     private static final String CHOCO_DEBUG = ".*\\[main\\] DEBUG.*";
 
