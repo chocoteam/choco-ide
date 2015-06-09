@@ -31,7 +31,7 @@ public class StringCompilerAndRunner {
      * $1 : tmp folder
      * $2 : libpath
      * $3 : classname
-     */
+     */ 
     private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java -Xlint:unchecked";
 
     /**
@@ -44,9 +44,9 @@ public class StringCompilerAndRunner {
                                                 +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s %3$s";
 
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
-    private static final String PATTERN_MAIN = "public class (\\w*)";
+    private static final String PATTERN_MAIN = "public class ([A-Za-z_\\$]+)";
 
-    private static final String PATTERN_PACKAGE = "package (.*);";
+    private static final String PATTERN_PACKAGE = "package ([A-Za-z_\\$]+(\\.[A-Za-z_\\$]+)*);";
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
