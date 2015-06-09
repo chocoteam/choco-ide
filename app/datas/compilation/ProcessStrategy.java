@@ -1,5 +1,6 @@
 package datas.compilation;
 
+import datas.compilation.RunEvent.Kind;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -15,26 +16,32 @@ import java.util.stream.Collectors;
 public abstract class ProcessStrategy {
 
     protected final CompilationAndRunResult compilationAndRunResult;
-    protected HashMap<RunEvent.Kind, String> mapRes;
+    private final String command;
+    protected HashMap<Kind, String> mapRes;
 
     public ProcessStrategy(String command, CompilationAndRunResult compilationAndRunResult) throws IOException {
+        this.command = command;
         this.compilationAndRunResult = compilationAndRunResult;
-        Process p = Runtime.getRuntime().exec(command);
         mapRes = new HashMap<>();
-
-        readOutputAndStoreString(p.getInputStream(), RunEvent.Kind.OUT);
-        readOutputAndStoreString(p.getErrorStream(), RunEvent.Kind.ERR);
-
-        p.destroy();
     }
 
-    private void readOutputAndStoreString(InputStream stream, RunEvent.Kind kind) throws IOException {
+    public ProcessStrategy executeCommand() throws IOException {
+        System.out.println("Executing command : \""+command+"\"");
+        Process p = Runtime.getRuntime().exec(command);
+        readOutputAndStoreString(p.getInputStream(), Kind.OUT);
+        readOutputAndStoreString(p.getErrorStream(), Kind.ERR);
+        p.destroy();
+        System.out.println("End of command");
+        return this;
+    }
+
+    private void readOutputAndStoreString(InputStream stream, Kind kind) throws IOException {
         BufferedReader reader = new BufferedReader((new InputStreamReader(stream)));
         mapRes.put(kind, getAndOutput(reader, kind));
     }
 
     @NotNull
-    private String getAndOutput(BufferedReader reader, RunEvent.Kind kind) throws IOException {
+    private String getAndOutput(BufferedReader reader, Kind kind) throws IOException {
         System.out.println(kind + ":");
         String res = stringOfReader(reader);
         System.out.println("\""+res+"\"");

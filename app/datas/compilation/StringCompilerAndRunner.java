@@ -26,23 +26,6 @@ public class StringCompilerAndRunner {
      */
     private static final String MAIN_FILE = "%s/src/%s.java";
 
-    /**
-     * Pattern de datas.compilation
-     * $1 : tmp folder
-     * $2 : libpath
-     * $3 : classname
-     */ 
-    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java -Xlint:unchecked";
-
-    /**
-     * Pattern d'exécution
-     * $1 : tmp folder
-     * $2 : libpath
-     * $3 : classname
-     */
-    private static final String CALL_JAVA_MAIN = "java -Djava.security.manager -Djava.security.policy=="+ Play.application().configuration().getString("security.manager.path")
-                                                +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s"+File.pathSeparator+" -Dlogback.configurationFile=lib/logback.xml %3$s";
-
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
     private static final String PATTERN_MAIN = "public class ([A-Za-z_\\$]+)";
 
@@ -102,15 +85,11 @@ public class StringCompilerAndRunner {
     }
 
     private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
-        String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
-        System.out.println(commande);
-        new CompileStrategy(commande, compilationAndRunResult).handleOutputs();
+        new CompileStrategy(compilationAndRunResult, tempDirectory, libpath, className).executeCommand().handleOutputs();
     }
 
     private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
-        String commande = String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className);
-        System.out.println(commande);
-        new RunStrategy(commande, compilationAndRunResult).handleOutputs();
+        new RunStrategy(compilationAndRunResult, tempDirectory, libpath, className).executeCommand().handleOutputs();
     }
 
     private void createFilesBeforeCompile(String code, String className, Path tempDirectory) throws IOException {

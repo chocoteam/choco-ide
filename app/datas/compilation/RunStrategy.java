@@ -1,6 +1,10 @@
 package datas.compilation;
 
+import play.Play;
+
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
@@ -8,10 +12,19 @@ import java.util.Arrays;
  */
 public class RunStrategy extends ProcessStrategy {
 
+    /**
+     * Pattern d'exécution
+     * $1 : tmp folder
+     * $2 : libpath
+     * $3 : classname
+     */
+    private static final String CALL_JAVA_MAIN = "java -Djava.security.manager -Djava.security.policy=="+ Play.application().configuration().getString("security.manager.path")
+            +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s"+File.pathSeparator+" -Dlogback.configurationFile=lib/logback.xml %3$s";
+
     private static final String CHOCO_DEBUG = ".*\\[main\\] DEBUG.*";
 
-    public RunStrategy(String callJavacMain, CompilationAndRunResult compilationAndRunResult) throws IOException {
-        super(callJavacMain,compilationAndRunResult);
+    public RunStrategy(CompilationAndRunResult compilationAndRunResult, Path tempDirectory, String libpath, String className) throws IOException {
+        super(String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className),compilationAndRunResult);
     }
 
     public void handleOutputs() {
