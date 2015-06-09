@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  */
 public abstract class ProcessStrategy {
 
+    private static final int TIMEOUT_SECONDS = 20;
     protected final CompilationAndRunResult compilationAndRunResult;
     private final String command;
     protected HashMap<Kind, String> mapRes;
@@ -28,8 +30,24 @@ public abstract class ProcessStrategy {
     public ProcessStrategy executeCommand() throws IOException {
         System.out.println("Executing command : \""+command+"\"");
         Process p = Runtime.getRuntime().exec(command);
-        readOutputAndStoreString(p.getInputStream(), Kind.OUT);
-        readOutputAndStoreString(p.getErrorStream(), Kind.ERR);
+
+        boolean interrupted = false;
+
+        try {
+            if(!p.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS)){
+                interrupted = true;
+            }
+        } catch (InterruptedException e) {
+            interrupted = true;
+        }
+
+        if(interrupted){
+            System.out.println("--- Execution interrompue à 2s ---");
+            p.destroyForcibly();
+        } else {
+            readOutputAndStoreString(p.getInputStream(), Kind.OUT);
+            readOutputAndStoreString(p.getErrorStream(), Kind.ERR);
+        }
         p.destroy();
         System.out.println("End of command");
         return this;
