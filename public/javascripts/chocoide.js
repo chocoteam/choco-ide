@@ -45,6 +45,14 @@ window.onload = function () {
         });
     });
 
+    // Event handler when modal popped up
+    $('.modal').on('shown.bs.modal', function (e) {
+        var myModal = $(this);
+        setTimeout(function () {
+            myModal.modal('hide');
+        }, 5000);
+    })
+
     // Event handler when submitting a report
     $("#reportForm").submit(function(event) {
         event.preventDefault();
