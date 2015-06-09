@@ -1,5 +1,7 @@
 package datas.keywords;
 
+import play.Play;
+
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,9 +13,6 @@ import java.util.jar.JarInputStream;
  */
 public class KeywordsManager {
 
-    private final static String BEGINNING_PACKAGE_NAME = "org/chocosolver";
-
-
     /**
      * Get the list of all classes from Choco Jar
      *
@@ -22,23 +21,19 @@ public class KeywordsManager {
     public static String getChocoClassesName() {
 
         String classes = "";
-        URL url = KeywordsManager.class.getClassLoader().getResource(
-                BEGINNING_PACKAGE_NAME);
-        String path = url.getPath().replaceAll("file:/", "/")
-                .replaceAll("!/"+BEGINNING_PACKAGE_NAME, "");
-
+        String path = Play.application().configuration().getString("datas.keywords.chocoPath");
 
         try {
-            JarInputStream crunchifyJarFile = new JarInputStream(new FileInputStream(path));
-            JarEntry crunchifyJar;
+            JarInputStream jarInputStream = new JarInputStream(new FileInputStream(path));
+            JarEntry jarEntry;
 
             while (true) {
-                crunchifyJar = crunchifyJarFile.getNextJarEntry();
-                if (crunchifyJar == null) {
+                jarEntry = jarInputStream.getNextJarEntry();
+                if (jarEntry == null) {
                     break;
                 }
-                if ((crunchifyJar.getName().endsWith(".class"))) {
-                    String className = crunchifyJar.getName().replaceAll("/", "\\.");
+                if ((jarEntry.getName().endsWith(".class"))) {
+                    String className = jarEntry.getName().replaceAll("/", "\\.");
                     String myClass = className.substring(0, className.lastIndexOf('.'));
                     if (myClass.contains(".") && !myClass.contains("$")) {
                         String[] parts = myClass.split("\\.");
