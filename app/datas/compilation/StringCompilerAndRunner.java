@@ -26,11 +26,12 @@ public class StringCompilerAndRunner {
      */
     private static final String MAIN_FILE = "%s/src/%s.java";
 
+    private static final String LETTER_THEN_LETTER_OR_DIGIT = "[A-Za-z_\\$][A-Za-z_\\$0-9]*";
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
-    private static final String PATTERN_MAIN = "public class ([A-Za-z_\\$][A-Za-z_\\$0-9]*)";
+    private static final String PATTERN_MAIN = "public class (" + LETTER_THEN_LETTER_OR_DIGIT + ")";
 
     // Regex permettant de trouver le nom du package (dans le 1er group)
-    private static final String PATTERN_PACKAGE = "package (([A-Za-z_\\$][A-Za-z_\\$0-9]*\\.)*[A-Za-z_\\$][A-Za-z_\\$0-9]*);";
+    private static final String PATTERN_PACKAGE = "package ((" + LETTER_THEN_LETTER_OR_DIGIT + "\\.)*"+LETTER_THEN_LETTER_OR_DIGIT+");";
 
     public CompilationAndRunResult compileAndRun(String code) throws IOException {
         System.out.println("Debut compileAndRun");
