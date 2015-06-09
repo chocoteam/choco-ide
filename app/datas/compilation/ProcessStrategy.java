@@ -24,6 +24,8 @@ public abstract class ProcessStrategy {
 
         readOutputAndStoreString(p.getInputStream(), RunEvent.Kind.OUT);
         readOutputAndStoreString(p.getErrorStream(), RunEvent.Kind.ERR);
+
+        p.destroy();
     }
 
     private void readOutputAndStoreString(InputStream stream, RunEvent.Kind kind) throws IOException {
