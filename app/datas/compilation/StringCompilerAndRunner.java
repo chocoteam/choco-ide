@@ -51,7 +51,7 @@ public class StringCompilerAndRunner {
         compileCode(compilationAndRunResult, className, libPath, tempDirectory);
         runCode(compilationAndRunResult, fullClassName, libPath, tempDirectory);
 
-        //deleteTmpFolder(tempDirectory);
+        deleteTmpFolder(tempDirectory);
 
         System.out.println("Fin compileAndRun");
 
