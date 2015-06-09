@@ -3,8 +3,6 @@ package datas.keywords;
 import play.Play;
 
 import java.io.FileInputStream;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -23,15 +21,9 @@ public class KeywordsManager {
         String classes = "";
         String path = Play.application().configuration().getString("datas.keywords.chocoPath");
 
-        try {
-            JarInputStream jarInputStream = new JarInputStream(new FileInputStream(path));
+        try(JarInputStream jarInputStream = new JarInputStream(new FileInputStream(path))){
             JarEntry jarEntry;
-
-            while (true) {
-                jarEntry = jarInputStream.getNextJarEntry();
-                if (jarEntry == null) {
-                    break;
-                }
+            while ((jarEntry = jarInputStream.getNextJarEntry())!=null) {
                 if ((jarEntry.getName().endsWith(".class"))) {
                     String className = jarEntry.getName().replaceAll("/", "\\.");
                     String myClass = className.substring(0, className.lastIndexOf('.'));
