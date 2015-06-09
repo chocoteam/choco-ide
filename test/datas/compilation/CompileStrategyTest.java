@@ -2,6 +2,8 @@ package datas.compilation;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -12,7 +14,7 @@ public class CompileStrategyTest {
 
     @Test
     public void testKeepLine() throws Exception {
-        assertThat(CompileStrategy.keepLine(""), is(true));
-        assertThat(CompileStrategy.keepLine("Picked up JAVA_TOOL_OPTIONS: -Xmx384m -Xss512k -Dfile.encoding=UTF-8"), is(false));
+        assertThat(StringFilter.keepLine("", Arrays.asList()), is(true));
+        assertThat(StringFilter.keepLine("Picked up JAVA_TOOL_OPTIONS: -Xmx384m -Xss512k -Dfile.encoding=UTF-8",Arrays.asList()), is(false));
     }
 }
