@@ -25,7 +25,6 @@ window.onload = function () {
     request.success(function (response, textStatus, jqXHR) {
         var responseObject = JSON.parse(response);
         chocoLangClasses += "|"+responseObject;
-        console.log(chocoLangClasses)
         editor.getSession().setMode("ace/mode/choco");
     });
 
@@ -101,10 +100,6 @@ function updateSamples() {
     });
 }
 
-function defineAceKeywords(){
-
-}
-
 // Compile the source code
 function compile() {
     // Changing the 'Run' button to 'Loading'
@@ -153,7 +148,12 @@ function compile() {
 
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown) {
-        $('#alertCompileFailure').modal('show');
+        if(jqXHR.responseText == "TIMEOUT") {
+            $('#alertCompileTimeout').modal('show');
+        }
+        else {
+            $('#alertCompileFailure').modal('show');
+        }
     });
 
     request.always(function (jqXHR, textStatus, errorThrown) {
