@@ -20,8 +20,8 @@ public class CompileStrategy extends ProcessStrategy {
 
     private static final String STARTING_JAVA_TOOL_OPTIONS = "^Picked up JAVA_TOOL_OPTIONS:.*";
 
-    public CompileStrategy(CompilationAndRunResult compilationAndRunResult, Path tempDirectory, String libpath, String className) throws IOException {
-        super(String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className),compilationAndRunResult);
+    public CompileStrategy(CompilationAndRunResult compilationAndRunResult, Path tempDirectory, String libpath, String className, int timeout) throws IOException {
+        super(String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className),compilationAndRunResult, timeout);
     }
 
     public void handleOutputs() {

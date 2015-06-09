@@ -17,15 +17,16 @@ import java.util.stream.Collectors;
  */
 public abstract class ProcessStrategy {
 
-    private static final int TIMEOUT_SECONDS = 20;
     protected final CompilationAndRunResult compilationAndRunResult;
     private final String command;
+    private int timeout;
     protected HashMap<Kind, String> mapRes;
 
-    public ProcessStrategy(String command, CompilationAndRunResult compilationAndRunResult) throws IOException {
+    public ProcessStrategy(String command, CompilationAndRunResult compilationAndRunResult, int timeout) throws IOException {
         this.command = command;
         this.compilationAndRunResult = compilationAndRunResult;
         mapRes = new HashMap<>();
+        this.timeout = timeout;
     }
 
     public ProcessStrategy executeCommand() throws IOException, TimeoutException {
@@ -35,7 +36,7 @@ public abstract class ProcessStrategy {
         boolean interrupted = false;
 
         try {
-            if(!p.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS)){
+            if(!p.waitFor(timeout, TimeUnit.SECONDS)){
                 interrupted = true;
             }
         } catch (InterruptedException e) {
@@ -43,8 +44,8 @@ public abstract class ProcessStrategy {
         }
 
         if(interrupted){
-            System.out.println("--- Execution interrompue à " + TIMEOUT_SECONDS + "s ---");
-            p.destroyForcibly();
+            System.out.println("--- Execution interrompue à " + timeout + "s ---");
+            p.destroyForcibly() ;
             throw new TimeoutException();
         } else {
             readOutputAndStoreString(p.getInputStream(), Kind.OUT);

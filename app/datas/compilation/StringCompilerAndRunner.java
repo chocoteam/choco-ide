@@ -39,6 +39,7 @@ public class StringCompilerAndRunner {
 
         String libPath = Play.application().configuration().getString("datas.compilation.libPath");
         String tmpPath = Play.application().configuration().getString("datas.compilation.tmpPath");
+        int timeout = Play.application().configuration().getInt("datas.compilation.timeout");
         Files.createDirectories(Paths.get(tmpPath));
         Path tempDirectory = Files.createTempDirectory(Paths.get(tmpPath), "choco-");
 
@@ -49,8 +50,8 @@ public class StringCompilerAndRunner {
 
         createFilesBeforeCompile(code, className, tempDirectory);
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
-        compileCode(compilationAndRunResult, className, libPath, tempDirectory);
-        runCode(compilationAndRunResult, fullClassName, libPath, tempDirectory);
+        compileCode(compilationAndRunResult, className, libPath, tempDirectory, timeout);
+        runCode(compilationAndRunResult, fullClassName, libPath, tempDirectory, timeout);
 
         deleteTmpFolder(tempDirectory);
 
@@ -87,12 +88,12 @@ public class StringCompilerAndRunner {
         return Optional.empty();
     }
 
-    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException, TimeoutException {
-        new CompileStrategy(compilationAndRunResult, tempDirectory, libpath, className).executeCommand().handleOutputs();
+    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, int timeout) throws IOException, TimeoutException {
+        new CompileStrategy(compilationAndRunResult, tempDirectory, libpath, className, timeout).executeCommand().handleOutputs();
     }
 
-    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException, TimeoutException {
-        new RunStrategy(compilationAndRunResult, tempDirectory, libpath, className).executeCommand().handleOutputs();
+    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, int timeout) throws IOException, TimeoutException {
+        new RunStrategy(compilationAndRunResult, tempDirectory, libpath, className, timeout).executeCommand().handleOutputs();
     }
 
     private void createFilesBeforeCompile(String code, String className, Path tempDirectory) throws IOException {

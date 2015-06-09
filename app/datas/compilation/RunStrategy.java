@@ -21,8 +21,8 @@ public class RunStrategy extends ProcessStrategy {
     private static final String CALL_JAVA_MAIN = "java -Djava.security.manager -Djava.security.policy=="+ Play.application().configuration().getString("security.manager.path")
             +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s -Dlogback.configurationFile=lib/logback.xml %3$s";
 
-    public RunStrategy(CompilationAndRunResult compilationAndRunResult, Path tempDirectory, String libpath, String className) throws IOException {
-        super(String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className),compilationAndRunResult);
+    public RunStrategy(CompilationAndRunResult compilationAndRunResult, Path tempDirectory, String libpath, String className, int timeout) throws IOException {
+        super(String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className),compilationAndRunResult, timeout);
     }
 
     public void handleOutputs() {
