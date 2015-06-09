@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +34,7 @@ public class StringCompilerAndRunner {
     // Regex permettant de trouver le nom du package (dans le 1er group)
     private static final String PATTERN_PACKAGE = "package ((" + LETTER_THEN_LETTER_OR_DIGIT + "\\.)*"+LETTER_THEN_LETTER_OR_DIGIT+");";
 
-    public CompilationAndRunResult compileAndRun(String code) throws IOException {
+    public CompilationAndRunResult compileAndRun(String code) throws IOException, TimeoutException {
         System.out.println("Debut compileAndRun");
 
         String libPath = Play.application().configuration().getString("datas.compilation.libPath");
@@ -86,11 +87,11 @@ public class StringCompilerAndRunner {
         return Optional.empty();
     }
 
-    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
+    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException, TimeoutException {
         new CompileStrategy(compilationAndRunResult, tempDirectory, libpath, className).executeCommand().handleOutputs();
     }
 
-    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
+    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException, TimeoutException {
         new RunStrategy(compilationAndRunResult, tempDirectory, libpath, className).executeCommand().handleOutputs();
     }
 

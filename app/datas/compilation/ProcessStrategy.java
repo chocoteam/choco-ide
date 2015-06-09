@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +28,7 @@ public abstract class ProcessStrategy {
         mapRes = new HashMap<>();
     }
 
-    public ProcessStrategy executeCommand() throws IOException {
+    public ProcessStrategy executeCommand() throws IOException, TimeoutException {
         System.out.println("Executing command : \""+command+"\"");
         Process p = Runtime.getRuntime().exec(command);
 
@@ -42,8 +43,9 @@ public abstract class ProcessStrategy {
         }
 
         if(interrupted){
-            System.out.println("--- Execution interrompue à 2s ---");
+            System.out.println("--- Execution interrompue à " + TIMEOUT_SECONDS + "s ---");
             p.destroyForcibly();
+            throw new TimeoutException();
         } else {
             readOutputAndStoreString(p.getInputStream(), Kind.OUT);
             readOutputAndStoreString(p.getErrorStream(), Kind.ERR);

@@ -17,6 +17,7 @@ import views.html.index;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class Application extends Controller {
 
@@ -38,6 +39,8 @@ public class Application extends Controller {
             StringCompilerAndRunner compilerAndRunner = new StringCompilerAndRunner();
             CompilationAndRunResult result = compilerAndRunner.compileAndRun(code);
             return ok(new ObjectMapper().<JsonNode>valueToTree(result));
+        }catch(TimeoutException e){
+            return internalServerError("TIMEOUT");
         } catch(Exception e){
             Logger.warn("Problem while compiling and running", e);
             return internalServerError("Problem while compiling and running : "+e.getMessage());
