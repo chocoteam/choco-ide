@@ -53,6 +53,7 @@
                                     <textarea id="commentReport" rows="5" name="comment" type="text" placeholder="Your comment" class="form-control input-md" required></textarea>
                                 </div>
                             </div>
+                            <p><i>Please note that your code and the output will be sent with your informations.</i></p>
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Send</button>
                         </form>
@@ -62,7 +63,7 @@
         </div>
 
             <!-- Alert when compile service returns another code than HTTP 200 -->
-        <div class="modal fade" id="alertCompileFailure" tabindex="-1" role="dialog" aria-labelledby="alertCompileFailureLabel" aria-hidden="true">
+        <div class="modal fade autohide" id="alertCompileFailure" tabindex="-1" role="dialog" aria-labelledby="alertCompileFailureLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="alert alert-danger" role="alert">
                     <span>
@@ -73,7 +74,7 @@
         </div>
 
             <!-- Alert when compile service timed out -->
-        <div class="modal fade" id="alertCompileTimeout" tabindex="-1" role="dialog" aria-labelledby="alertCompileTimeoutLabel" aria-hidden="true">
+        <div class="modal fade autohide" id="alertCompileTimeout" tabindex="-1" role="dialog" aria-labelledby="alertCompileTimeoutLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="alert alert-danger" role="alert">
                     <span>
@@ -84,7 +85,7 @@
         </div>
 
             <!-- Alert when report submitted successfully -->
-        <div class="modal fade" id="alertReportSuccess" tabindex="-1" role="dialog" aria-labelledby="alertReportSuccessLabel" aria-hidden="true">
+        <div class="modal fade autohide" id="alertReportSuccess" tabindex="-1" role="dialog" aria-labelledby="alertReportSuccessLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="alert alert-success" role="alert">
                     <span>
@@ -95,7 +96,7 @@
         </div>
 
             <!-- Alert when report not submitted due to errors -->
-        <div class="modal fade" id="alertReportFailure" tabindex="-1" role="dialog" aria-labelledby="alertReportFailureLabel" aria-hidden="true">
+        <div class="modal fade autohide" id="alertReportFailure" tabindex="-1" role="dialog" aria-labelledby="alertReportFailureLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="alert alert-danger" role="alert">
                     <span>

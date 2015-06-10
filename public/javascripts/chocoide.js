@@ -46,7 +46,7 @@ window.onload = function () {
     });
 
     // Event handler when modal popped up
-    $('.modal').on('shown.bs.modal', function (e) {
+    $('.autohide').on('shown.bs.modal', function (e) {
         var myModal = $(this);
         setTimeout(function () {
             myModal.modal('hide');
