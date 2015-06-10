@@ -3,7 +3,7 @@
 @main("Choco IDE") {
 
     <header id="header" class="row">
-        <div class="col-xs-offset-3">
+        <div class="col-xs-offset-1 col-sm-offset-3">
             <img id="chocologo" src='@routes.Assets.at("images/ChocoLogo-160x135.png")'/>
             <div class="text-justify">
                 <h2>Try Choco online !</h2>
@@ -24,10 +24,10 @@
                 </button>
             </span>
 
-            <button id="runButton" type="button" class="btn btn-success btn-lg col-xs-1 col-xs-offset-4 col-md-1 col-md-offset-4" onclick="compile()">
+            <button id="runButton" type="button" class="btn btn-success btn-lg col-xs-offset-1 col-xs-4 col-md-1 col-md-offset-4" onclick="compile()">
                 <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn btn-danger btn-lg col-xs-1 col-xs-offset-2 col-md-1 col-md-offset-2" data-toggle="modal" data-target="#reportModal">
+            <button type="button" class="btn btn-danger btn-lg col-xs-offset-2 col-xs-4 col-md-1 col-md-offset-2" data-toggle="modal" data-target="#reportModal">
                 <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
             </button>
         </div>
