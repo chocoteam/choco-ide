@@ -223,18 +223,18 @@ function settingDragNDrop(){
 
     window.ondragover = function(e){
         e.preventDefault();
-        document.getElementById("header").style.filter="blur(5px)";
-        document.getElementById("footer").style.filter="blur(5px)";
-        document.getElementById("not-editor").style.filter="blur(5px)";
+        $("#header").addClass("blur");
+        $("#footer").addClass("blur");
+        $("#not-editor").addClass("blur");
+        $("#console").addClass("blur");
         document.getElementById("console").style.backgroundColor="lightgrey";
-        document.getElementById("console").style.filter="blur(5px)";
     };
 
     var unblur = function () {
-        document.getElementById("header").style.filter="";
-        document.getElementById("footer").style.filter="";
-        document.getElementById("not-editor").style.filter="";
-        document.getElementById("console").style.filter="";
+        $("#header").removeClass("blur");
+        $("#footer").removeClass("blur");
+        $("#not-editor").removeClass("blur");
+        $("#console").removeClass("blur");
         document.getElementById("console").style.backgroundColor="white";
     };
 
