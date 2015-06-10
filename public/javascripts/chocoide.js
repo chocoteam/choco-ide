@@ -46,7 +46,7 @@ window.onload = function () {
     });
 
     // Event handler when modal popped up
-    $('.modal').on('shown.bs.modal', function (e) {
+    $('.autohide').on('shown.bs.modal', function (e) {
         var myModal = $(this);
         setTimeout(function () {
             myModal.modal('hide');
@@ -294,6 +294,7 @@ function performanceTest() {
 
         var compilationOK = "OK";
         var runtimeOK = "OK";
+        var timeoutOK = "OK";
 
         var start = new Date().getTime(); // start the timer :-)
 
@@ -323,16 +324,30 @@ function performanceTest() {
         });
 
         request.fail(function (jqXHR, textStatus, errorThrown) {
-            compilationOK = "KO";
-            runtimeOK = "KO";
+            if(jqXHR.responseText == "TIMEOUT") {
+                timeoutOK = "KO";
+            }
+            else {
+                compilationOK = "KO";
+                runtimeOK = "KO";
+            }
         });
 
 
         request.complete(function () {
             var end = new Date().getTime();
             var time = end - start;
-            consoleCode.innerHTML += "<pre>" + filename + " processed in " + time/1000 + " seconds. Compilation : " + compilationOK + " - Runtime : " + runtimeOK + "</pre>";
+            consoleCode.innerHTML += "<pre>" + filename + " processed in " + time/1000 + " seconds. Compilation : " + compilationOK + " - Runtime : " + runtimeOK
+            + " - Timeout : " + timeoutOK + "</pre>";
         });
     });
 
 }
+
+$(function() {
+    $('.compile').tooltip();
+});
+
+$(function() {
+    $('.report').tooltip();
+});
