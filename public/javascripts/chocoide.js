@@ -343,3 +343,11 @@ function performanceTest() {
     });
 
 }
+
+$(function() {
+    $('.compile').tooltip();
+});
+
+$(function() {
+    $('.report').tooltip();
+});
