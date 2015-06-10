@@ -27,7 +27,7 @@ public class SampleManager {
      * Singleton constructor
      */
     private SampleManager() {
-        this.sampleMap = new HashMap<>();
+        this.sampleMap = new TreeMap<>();
         //Create the sample directory
         String directory = Play.application().configuration().getString("sample.root.directory");
         rootDirectory = new File(directory);

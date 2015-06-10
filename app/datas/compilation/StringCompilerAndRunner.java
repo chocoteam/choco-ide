@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,33 +27,19 @@ public class StringCompilerAndRunner {
      */
     private static final String MAIN_FILE = "%s/src/%s.java";
 
-    /**
-     * Pattern de datas.compilation
-     * $1 : tmp folder
-     * $2 : libpath
-     * $3 : classname
-     */
-    private static final String CALL_JAVAC_MAIN = "javac -cp %1$s/bin/"+ File.pathSeparator + "%2$s -d %1$s/bin/ %1$s/src/%3$s.java -Xlint:unchecked";
-
-    /**
-     * Pattern d'exécution
-     * $1 : tmp folder
-     * $2 : libpath
-     * $3 : classname
-     */
-    private static final String CALL_JAVA_MAIN = "java -Djava.security.manager -Djava.security.policy=="+ Play.application().configuration().getString("security.manager.path")
-                                                +" -cp %1$s/bin/"+ File.pathSeparator + "%2$s %3$s";
-
+    private static final String LETTER_THEN_LETTER_OR_DIGIT = "[A-Za-z_\\$][A-Za-z_\\$0-9]*";
     // Regex permettant de trouver le nom de la classe possédant la méthode main (dans le 1er group)
-    private static final String PATTERN_MAIN = "public class (\\w*)";
+    private static final String PATTERN_MAIN = "public class (" + LETTER_THEN_LETTER_OR_DIGIT + ")";
 
-    private static final String PATTERN_PACKAGE = "package (.*);";
+    // Regex permettant de trouver le nom du package (dans le 1er group)
+    private static final String PATTERN_PACKAGE = "package ((" + LETTER_THEN_LETTER_OR_DIGIT + "\\.)*"+LETTER_THEN_LETTER_OR_DIGIT+");";
 
-    public CompilationAndRunResult compileAndRun(String code) throws IOException {
+    public CompilationAndRunResult compileAndRun(String code) throws IOException, TimeoutException {
         System.out.println("Debut compileAndRun");
 
         String libPath = Play.application().configuration().getString("datas.compilation.libPath");
         String tmpPath = Play.application().configuration().getString("datas.compilation.tmpPath");
+        int timeout = Play.application().configuration().getInt("datas.compilation.timeout");
         Files.createDirectories(Paths.get(tmpPath));
         Path tempDirectory = Files.createTempDirectory(Paths.get(tmpPath), "choco-");
 
@@ -63,10 +50,10 @@ public class StringCompilerAndRunner {
 
         createFilesBeforeCompile(code, className, tempDirectory);
         CompilationAndRunResult compilationAndRunResult = new CompilationAndRunResult();
-        compileCode(compilationAndRunResult, className, libPath, tempDirectory);
-        runCode(compilationAndRunResult, fullClassName, libPath, tempDirectory);
+        compileCode(compilationAndRunResult, className, libPath, tempDirectory, timeout);
+        runCode(compilationAndRunResult, fullClassName, libPath, tempDirectory, timeout);
 
-        //deleteTmpFolder(tempDirectory);
+        deleteTmpFolder(tempDirectory);
 
         System.out.println("Fin compileAndRun");
 
@@ -101,16 +88,12 @@ public class StringCompilerAndRunner {
         return Optional.empty();
     }
 
-    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
-        String commande = String.format(CALL_JAVAC_MAIN, tempDirectory.toString(), libpath, className);
-        System.out.println(commande);
-        new CompileStrategy(commande, compilationAndRunResult).handleOutputs();
+    private void compileCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, int timeout) throws IOException, TimeoutException {
+        new CompileStrategy(compilationAndRunResult, tempDirectory, libpath, className, timeout).executeCommand().handleOutputs();
     }
 
-    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory) throws IOException {
-        String commande = String.format(CALL_JAVA_MAIN, tempDirectory.toString(), libpath, className);
-        System.out.println(commande);
-        new RunStrategy(commande, compilationAndRunResult).handleOutputs();
+    private void runCode(CompilationAndRunResult compilationAndRunResult, String className, String libpath, Path tempDirectory, int timeout) throws IOException, TimeoutException {
+        new RunStrategy(compilationAndRunResult, tempDirectory, libpath, className, timeout).executeCommand().handleOutputs();
     }
 
     private void createFilesBeforeCompile(String code, String className, Path tempDirectory) throws IOException {

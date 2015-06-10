@@ -25,7 +25,6 @@ window.onload = function () {
     request.success(function (response, textStatus, jqXHR) {
         var responseObject = JSON.parse(response);
         chocoLangClasses += "|"+responseObject;
-        console.log(chocoLangClasses)
         editor.getSession().setMode("ace/mode/choco");
     });
 
@@ -45,6 +44,14 @@ window.onload = function () {
             }
         });
     });
+
+    // Event handler when modal popped up
+    $('.modal').on('shown.bs.modal', function (e) {
+        var myModal = $(this);
+        setTimeout(function () {
+            myModal.modal('hide');
+        }, 5000);
+    })
 
     // Event handler when submitting a report
     $("#reportForm").submit(function(event) {
@@ -101,10 +108,6 @@ function updateSamples() {
     });
 }
 
-function defineAceKeywords(){
-
-}
-
 // Compile the source code
 function compile() {
     // Changing the 'Run' button to 'Loading'
@@ -131,7 +134,6 @@ function compile() {
         var compilationEvents = response.errors;
         var runtimeEvents = response.events;
 
-
         consoleCode.innerHTML = "";
 
         compilationEvents.forEach(function(compilationEvent) {
@@ -153,7 +155,12 @@ function compile() {
 
     // Callback handler that will be called on failure
     request.fail(function (jqXHR, textStatus, errorThrown) {
-        $('#alertCompileFailure').modal('show');
+        if(jqXHR.responseText == "TIMEOUT") {
+            $('#alertCompileTimeout').modal('show');
+        }
+        else {
+            $('#alertCompileFailure').modal('show');
+        }
     });
 
     request.always(function (jqXHR, textStatus, errorThrown) {
@@ -269,4 +276,63 @@ function settingDragNDrop(){
             console.log("No valid element dropped");
         }
     };
+}
+
+/**
+ * Little routine used for performance tests
+ */
+function performanceTest() {
+    // Getting the console UI for the report
+    var consoleCode = document.getElementById('console');
+    consoleCode.innerHTML = ""; // cleaning up!
+
+    // Fetching the samples...
+    jQuery.parseJSON(samples).forEach(function (jsonSample) {
+        var name = jsonSample.name;
+        var filename = jsonSample.filename;
+        var content = jsonSample.content;
+
+        var compilationOK = "OK";
+        var runtimeOK = "OK";
+
+        var start = new Date().getTime(); // start the timer :-)
+
+        // Run compilation on current sample
+        var request = $.ajax({
+            url: "/compile",
+            type: "post",
+            data: {body: content}
+        });
+
+        // Callback handler that will be called on success - HTTP 200 OK
+        request.done(function (response, textStatus, jqXHR){
+            var compilationEvents = response.errors;
+            var runtimeEvents = response.events;
+
+            // Compilation errors
+            if( $.isArray(compilationEvents) &&  (compilationEvents.length > 0) ) {
+                compilationOK = "KO";
+                runtimeOK = "KO";
+            }
+
+            runtimeEvents.forEach(function(runtimeEvent) {
+                if(runtimeEvent.kind == "stderr") {
+                    runtimeOK = "KO";
+                }
+            });
+        });
+
+        request.fail(function (jqXHR, textStatus, errorThrown) {
+            compilationOK = "KO";
+            runtimeOK = "KO";
+        });
+
+
+        request.complete(function () {
+            var end = new Date().getTime();
+            var time = end - start;
+            consoleCode.innerHTML += "<pre>" + filename + " processed in " + time/1000 + " seconds. Compilation : " + compilationOK + " - Runtime : " + runtimeOK + "</pre>";
+        });
+    });
+
 }
