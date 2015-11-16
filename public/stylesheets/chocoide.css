@@ -43,14 +43,15 @@ section button {
 
 #editor {
     position: relative;
-    height: 420px;
+    height: 620px;
 }
 
 #console {
+    background-color: #2B2B2B;
     overflow-x: hidden;
     overflow-y: scroll;
-    height: 420px;
-    border: 1px solid black;
+    height: 620px;
+    /*border: 1px solid black;*/
 }
 
 
@@ -59,20 +60,19 @@ section button {
     background-color: black;
 }
 
-.success {
-    color: blue;
+.error,
+.compilationErr,
+.stdErr{
+    font-size: 80%;
+    background-color: #2B2B2B;
+    color: #FF6B68;
 }
 
-.compilationErr {
-    color: red;
-}
-
+.success ,
 .stdOut {
-    color: blue;
-}
-
-.stdErr {
-    color: red;
+    background-color: #2B2B2B;
+    font-size: 80%;
+    color: #BBBBBB;
 }
 
 #refreshSamplesButton {
