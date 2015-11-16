@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, Ecole des Mines de Nantes
  * This class is released under a BSD 4-clause License.
- * Visit http://http://choco-solver.org/ for more details.
+ * Visit http://choco-solver.org/ for more details.
  */
 package org.chocosolver.examples;
 
