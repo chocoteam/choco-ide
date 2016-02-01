@@ -11,8 +11,8 @@ Project during our studies in IT at the Ecole des Mines de Nantes
 
 ### Devs
 
-Yann ROLLAND
-Nathanel GIMENEZ
-Guillaume POUILLOUX
-Mathieu THEBAUD
-Jean-Baptiste ROBERT
+- Yann ROLLAND
+- Nathanel GIMENEZ
+- Guillaume POUILLOUX
+- Mathieu THEBAUD
+- Jean-Baptiste ROBERT
