@@ -128,8 +128,8 @@ public class AircraftLanding {
                     Optional<IntVar> selected =
                             Arrays.stream(variables)
                                     .filter(v -> !v.isInstantiated())
-                                    .min((v1, v2) -> closest(v2, map) - closest(v1, map));
-                    return selected.isPresent() ? selected.get() : null;
+                                    .min((v1, v2) -> closest(v2, map) - closest(v1, map))
+                                    .orElse(null);
                 },
                 var -> closest(var, map),
                 DecisionOperator.int_eq,
