@@ -8,14 +8,13 @@ import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.search.loop.monitors.IMonitorSolution;
-import org.chocosolver.solver.search.strategy.SearchStrategyFactory;
+import org.chocosolver.solver.search.strategy.Search;
 import org.chocosolver.solver.search.strategy.assignments.DecisionOperator;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.util.tools.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -123,14 +122,11 @@ public class AircraftLanding {
                 .range(0, N)
                 .boxed()
                 .collect(Collectors.toMap(i -> planes[i], i -> LT[i][1]));
-        solver.set(SearchStrategyFactory.intVarSearch(
-                variables -> {
-                    Optional<IntVar> selected =
-                            Arrays.stream(variables)
-                                    .filter(v -> !v.isInstantiated())
-                                    .min((v1, v2) -> closest(v2, map) - closest(v1, map))
-                                    .orElse(null);
-                },
+        solver.setSearch(Search.intVarSearch(
+                variables -> Arrays.stream(variables)
+                        .filter(v -> !v.isInstantiated())
+                        .min((v1, v2) -> closest(v2, map) - closest(v1, map))
+                        .orElse(null),
                 var -> closest(var, map),
                 DecisionOperator.int_eq,
                 planes
