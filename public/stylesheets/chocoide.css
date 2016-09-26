@@ -43,14 +43,14 @@ section button {
 
 #editor {
     position: relative;
-    height: 620px;
+    height: 720px;
 }
 
 #console {
     background-color: #2B2B2B;
     overflow-x: hidden;
     overflow-y: scroll;
-    height: 620px;
+    height: 720px;
     /*border: 1px solid black;*/
 }
 
